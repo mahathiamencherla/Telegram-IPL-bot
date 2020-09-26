@@ -24,3 +24,7 @@ scoreCard = c.scorecard(match_id)
 
 print(json.dumps(scoreCard, indent = 4))
 
+# we need points table --- scrape off google or cricbuzz (???)
+# we need MOTM etc
+# upcoming matches --- cricapi 
+#update once wicket happens
