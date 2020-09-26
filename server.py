@@ -1,11 +1,27 @@
 from bot import telegram_chatbot
+from pycricbuzz import Cricbuzz
+import json
 
+c = Cricbuzz()
 tg_bot = telegram_chatbot("config.cfg")  
+
+
 update_id = None
 
+matches = c.matches()
+
+# Match stats (To be sent with "do you want match details?")
+for match in matches:
+	if(match["srs"] == "Indian Premier League 2020"):
+		match_id = match["id"]
+		ipl = match
+hello = "hello"
 def make_reply(msg):
-	if msg is not None:
-		reply = "Hey! This is to test our bot"
+	print(hello)
+	if msg=="Give me updates":
+		reply = json.dumps(ipl, indent = 4)
+	else:
+		reply = "Type: Give me updates"	
 	return reply	
 
 
