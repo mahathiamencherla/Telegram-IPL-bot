@@ -9,6 +9,9 @@ c = Cricbuzz()
 tg_bot = telegram_chatbot("config.cfg")  
 
 update_id = None
+match_id = None
+
+yesFlag = False
 
 matches = c.matches()
 
@@ -17,26 +20,40 @@ overUpdateUserIds = [] #users who want over by over deets
 
 # Match stats (To be sent with "do you want match details?")
 def refresh_match_details():
+	global match_id
 	for match in matches:
 		if(match["srs"] == "Indian Premier League 2020"):
 			match_id = match["id"]
-			if match["mchstate"] == "preview" :
-				ipl = match
+			ipl = match
 	return ipl		
 
 ipl = refresh_match_details() 
+liveScore = c.livescore(match_id)
 
 def addUserId(userList, id):
 	if id not in userList:
 		userList.append(id)
 
+def removeUserId(userList, id):
+	if id in userList:
+		userList.remove(id)		
+
 def make_reply(msg, id):
-	print("hello")
+	global yesFlag
 	if msg=="Give me updates":
 		reply = json.dumps(ipl, indent = 4)
 	elif msg == "/stop" :
 		allUserIds.remove(id)
 		reply = "Succesfully unsubscribed!"
+	elif msg == "Yes" or msg == "YES" or msg == "yes" or msg == "Y":
+		reply = "You are going to get match details!"
+		addUserId(overUpdateUserIds,id)
+		yesFlag = True
+	elif msg == "no" or msg == "NO" or msg == "No" or msg == "N":	
+		reply = "Okay, no match details."
+	elif msg == "/stop-match-details":
+		removeUserId(overUpdateUserIds,id)
+		reply = "You won't be getting detailed updates for this match anymore."	
 	else:
 		reply = "Type: Give me updates"	
 	return reply	
@@ -46,7 +63,7 @@ def send_to_all(msg):
 		tg_bot.send_message(msg, id)
 
 def match_day_details():
-	refresh_match_details()
+	ipl = refresh_match_details()
 	team1 = ipl["team1"]["name"]
 	team2 = ipl["team2"]["name"]
 	toss = ipl["toss"]
@@ -62,13 +79,18 @@ def toss_squad_details():
 	send_to_all(toss)
 	send_to_all("Playing 11 for "+team1+": %0A"+team1Squad)
 	send_to_all("Playing 11 for "+team2+": %0A"+team2Squad)	
-	send_to_all("Do you detailed over updates(Y/N)")
+	send_to_all("Do you want detailed updates of the match? (Y/N)")
+
+def get_match_details(liveScore):
+	return 
+
+
 
 def match_summary():  #call when mchstate changes to mom
 	return
 
 schedule.every().day.at("00:00").do(match_day_details)
-schedule.every().day.at("19:15").do(toss_squad_details)
+schedule.every().day.at("19:38").do(toss_squad_details)
 
 while True:
 	schedule.run_pending()
