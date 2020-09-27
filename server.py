@@ -22,10 +22,9 @@ def refresh_match_details():
 			match_id = match["id"]
 			if match["mchstate"] == "preview" :
 				ipl = match
-			else:
-				completed_ipl = match
+	return ipl		
 
-refresh_match_details() 
+ipl = refresh_match_details() 
 
 def addUserId(userList, id):
 	if id not in userList:
