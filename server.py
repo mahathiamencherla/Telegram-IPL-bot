@@ -46,7 +46,7 @@ def send_to_all(msg):
 		tg_bot.send_message(msg, id)
 
 def match_day_details():
-	refresh_match_details()
+	ipl = refresh_match_details()
 	team1 = ipl["team1"]["name"]
 	team2 = ipl["team2"]["name"]
 	toss = ipl["toss"]
