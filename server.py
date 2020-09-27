@@ -16,13 +16,16 @@ allUserIds = [] #all subscribed users
 overUpdateUserIds = [] #users who want over by over deets
 
 # Match stats (To be sent with "do you want match details?")
-for match in matches:
-	if(match["srs"] == "Indian Premier League 2020"):
-		match_id = match["id"]
-		if match["mchstate"] == "preview" :
-			ipl = match
-		else:
-			completed_ipl = match
+def refresh_match_details():
+	for match in matches:
+		if(match["srs"] == "Indian Premier League 2020"):
+			match_id = match["id"]
+			if match["mchstate"] == "preview" :
+				ipl = match
+			else:
+				completed_ipl = match
+
+refresh_match_details() 
 
 def addUserId(userList, id):
 	if id not in userList:
@@ -44,6 +47,7 @@ def send_to_all(msg):
 		tg_bot.send_message(msg, id)
 
 def match_day_details():
+	refresh_match_details()
 	team1 = ipl["team1"]["name"]
 	team2 = ipl["team2"]["name"]
 	toss = ipl["toss"]
