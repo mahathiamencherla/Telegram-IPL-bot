@@ -1,9 +1,10 @@
 from bot import telegram_chatbot
 from pycricbuzz import Cricbuzz
 import json
-
+import threading
 import schedule
 import time
+from pointsTable import *
 
 c = Cricbuzz()
 tg_bot = telegram_chatbot("config.cfg")  
@@ -49,13 +50,16 @@ def make_reply(msg, id):
 		reply = "You are going to get match details!"
 		addUserId(overUpdateUserIds,id)
 		yesFlag = True
+		beginThread()
 	elif msg == "no" or msg == "NO" or msg == "No" or msg == "N":	
 		reply = "Okay, no match details."
+	elif msg == "/points-table":	
+		reply = getPointsTable()
 	elif msg == "/stop-match-details":
 		removeUserId(overUpdateUserIds,id)
 		reply = "You won't be getting detailed updates for this match anymore."	
 	elif msg == "/help":
-		reply = "Welcome to the IPL Updates bot.\n Use this as a user guide:\n1. /next-match to get upcoming match details.\n2. /points-table to get updates points table.\nThe bot is going to send you summary updates of every match. If you are prompted with a \"Do you want more match details?\" question, you can answer yes to receive over by over and wicket updates.\nUse /stop-match-details to stop getting over by over and wicket details.\nYou can always use /stop to stop the bot.\nThank you!\nFind the source code on: https://github.com/mahathiamencherla15/Telegram-IPL-bot/ "	
+		reply = "Welcome to the IPL Updates bot.\nUse this as a user guide:\n1. /next-match to get upcoming match details.\n2. /points-table to get updates points table.\nThe bot is going to send you summary updates of every match. If you are prompted with a \"Do you want more match details?\" question, you can answer yes to receive over by over and wicket updates.\nUse /stop-match-details to stop getting over by over and wicket details.\nYou can always use /stop to stop the bot.\nThank you!\nFind the source code on: https://github.com/mahathiamencherla15/Telegram-IPL-bot/ "	
 	else:
 		reply = "Type: Give me updates"	
 	return reply	
@@ -83,16 +87,26 @@ def toss_squad_details():
 	send_to_all("Playing 11 for "+team2+": %0A"+team2Squad)	
 	send_to_all("Do you want detailed updates of the match? (Y/N)")
 
-def get_match_details(liveScore):
+def get_match_details():	
+	global liveScore		
+	while float(liveScore["batting"]["score"][0]["overs"]) != 20.0:		
+		if float(liveScore["batting"]["score"][0]["overs"]).is_integer():
+			#get deets
+			print(liveScore["batting"]["score"][0]["runs"],"-",liveScore["batting"]["score"][0]["wickets"])
+			print(liveScore["batting"]["score"][0]["overs"]," overs")
+		time.sleep(180)
+		liveScore = c.livescore(match_id)
 	return 
-
-
 
 def match_summary():  #call when mchstate changes to mom
 	return
 
 schedule.every().day.at("00:00").do(match_day_details)
-schedule.every().day.at("19:38").do(toss_squad_details)
+schedule.every().day.at("19:15").do(toss_squad_details)
+
+def beginThread() :
+	thread1 = threading.Thread(target = get_match_details)
+	thread1.start()
 
 while True:
 	schedule.run_pending()
