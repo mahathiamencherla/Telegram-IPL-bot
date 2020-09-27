@@ -54,6 +54,8 @@ def make_reply(msg, id):
 	elif msg == "/stop-match-details":
 		removeUserId(overUpdateUserIds,id)
 		reply = "You won't be getting detailed updates for this match anymore."	
+	elif msg == "/help":
+		reply = "Welcome to the IPL Updates bot.\n Use this as a user guide:\n1. /next-match to get upcoming match details.\n2. /points-table to get updates points table.\nThe bot is going to send you summary updates of every match. If you are prompted with a \"Do you want more match details?\" question, you can answer yes to receive over by over and wicket updates.\nUse /stop-match-details to stop getting over by over and wicket details.\nYou can always use /stop to stop the bot.\nThank you!\nFind the source code on: https://github.com/mahathiamencherla15/Telegram-IPL-bot/ "	
 	else:
 		reply = "Type: Give me updates"	
 	return reply	
