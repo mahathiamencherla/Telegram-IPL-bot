@@ -44,7 +44,9 @@ def removeUserId(userList, id):
 
 def make_reply(msg, id):
 	global yesFlag
-	if msg=="Give me updates":
+	if msg == None:
+		return
+	elif msg=="Give me updates":
 		reply = json.dumps(ipl, indent = 4)
 	elif msg == "/stop" :
 		allUserIds.remove(id)
@@ -104,7 +106,7 @@ def get_match_details():
 	global scoreCard		
 	prev_over = 0.0
 	wickets = 0
-	while float(scoreCard["scorecard"][0]["overs"]) != 20.0 and int(scoreCard["scorecard"][0]["inng_num"]) !=2 :
+	while not(float(scoreCard["scorecard"][0]["overs"]) == 20.0 and int(scoreCard["scorecard"][0]["inng_num"]) == 2) :
 		if wickets != int(scoreCard["scorecard"][0]["wickets"]):
 			fall_of_wickets()
 			wickets = int(scoreCard["scorecard"][0]["wickets"])
@@ -112,7 +114,7 @@ def get_match_details():
 		if float(scoreCard["scorecard"][0]["overs"]).is_integer() and prev_over != float(scoreCard["scorecard"][0]["overs"]):			
 			prev_over = float(scoreCard["scorecard"][0]["overs"])			
 			over_update = scoreCard["scorecard"][0]["batteam"] + " are batting!\n" + scoreCard["scorecard"][0]["runs"] + " - " + scoreCard["scorecard"][0]["wickets"] + "\n" + scoreCard["scorecard"][0]["overs"] + " overs"			
-			send_over_updates(over_update)
+			send_over_updates(over_update)			
 			if(float(scoreCard["scorecard"][0]["overs"]) == 20.0):
 				innings_summary()
 		time.sleep(60)
@@ -133,17 +135,18 @@ def fall_of_wickets():
 		if batsman["name"] == fallen_batsman['name']:
 			dismissal = batsman["dismissal"]
 	msg = fallen_batsman['name'] + " is out!\n" + dismissal + "\n" + fallen_batsman['score'] + " - " + fallen_batsman['wkt_num'] + "\n" + fallen_batsman["overs"] + " overs" 
-	send_over_updates(msg)
+	send_over_updates(msg)	
 	return
 
-def beginThread() :
+def beginThread() :	
 	thread1 = threading.Thread(target = get_match_details)
 	thread1.start()
 	return
 
 schedule.every().day.at("00:00").do(match_day_details)
 schedule.every().day.at("19:20").do(toss_squad_details)
-schedule.every().day.at("21:48").do(beginThread)
+#schedule.every().day.at("19:30").do(beginThread)
+beginThread()
 
 while True:
 	schedule.run_pending()

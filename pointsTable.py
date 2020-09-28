@@ -44,8 +44,7 @@ def pointsTableParser(table):
 		print(len(table[0][i]))
 		# print(table[0][i],"\t",table[1][i],"\t",table[2][i],"\t",table[3][i],"\t",table[4][i],"\t",table[5][i],"\t")
 		beautyTable += table[0][i] + table[1][i]+"            "+table[2][i]+"            "+table[3][i]+"          "+table[4][i]+"        "+table[5][i]
-		beautyTable += "\n"
-	print(beautyTable)	
+		beautyTable += "\n"	
 	return beautyTable
 
 # table = getPointsTable()

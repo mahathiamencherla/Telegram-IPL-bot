@@ -11,6 +11,7 @@ for match in matches:
 	if(match["srs"] == "Indian Premier League 2020"):
 		match_id = match["id"]
 		ipl = match	
+		print(ipl)
 
 # print(json.dumps(ipl, indent = 4))
 
@@ -41,5 +42,5 @@ def innings_summary():
 	inn_sum = "Innings " + scoreCard["scorecard"][0]["inng_num"] + " summary:\n" + scoreCard["scorecard"][0]["runs"] + " - " + scoreCard["scorecard"][0]["wickets"] + "\n" + scoreCard["scorecard"][0]["overs"] +" overs"
 	print(inn_sum)	
 
-fall_of_wickets()
+# print(int(scoreCard["scorecard"][0]["wickets"]), type(int(scoreCard["scorecard"][0]["wickets"])))
 	
