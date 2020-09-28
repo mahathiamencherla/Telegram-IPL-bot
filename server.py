@@ -29,7 +29,8 @@ def refresh_match_details():
 	return ipl		
 
 ipl = refresh_match_details() 
-liveScore = c.livescore(match_id)
+# liveScore = c.livescore(match_id)
+scoreCard = c.scorecard(match_id)
 
 def addUserId(userList, id):
 	if id not in userList:
@@ -50,11 +51,15 @@ def make_reply(msg, id):
 		reply = "You are going to get match details!"
 		addUserId(overUpdateUserIds,id)
 		yesFlag = True
-		beginThread()
+		t = time.localtime()
+		current_time = time.strftime("%H%M", t)
+		if(int(current_time) >= 1930):
+			beginThread()
 	elif msg == "no" or msg == "NO" or msg == "No" or msg == "N":	
 		reply = "Okay, no match details."
 	elif msg == "/points-table":	
-		reply = getPointsTable()
+		table = getPointsTable()
+		reply = pointsTableParser(table)
 	elif msg == "/stop-match-details":
 		removeUserId(overUpdateUserIds,id)
 		reply = "You won't be getting detailed updates for this match anymore."	
@@ -88,21 +93,30 @@ def toss_squad_details():
 	send_to_all("Do you want detailed updates of the match? (Y/N)")
 
 def get_match_details():	
-	global liveScore		
-	while float(liveScore["batting"]["score"][0]["overs"]) != 20.0:		
-		if float(liveScore["batting"]["score"][0]["overs"]).is_integer():
+	global scoreCard		
+	while True:		
+		if float(scoreCard["scorecard"][0]["overs"]).is_integer():
 			#get deets
-			print(liveScore["batting"]["score"][0]["runs"],"-",liveScore["batting"]["score"][0]["wickets"])
-			print(liveScore["batting"]["score"][0]["overs"]," overs")
-		time.sleep(180)
-		liveScore = c.livescore(match_id)
+			print(scoreCard["scorecard"][0]["batteam"], "are batting!")
+			print(scoreCard["scorecard"][0]["runs"],"-",scoreCard["scorecard"][0]["wickets"])
+			print(scoreCard["scorecard"][0]["overs"],"overs")
+			if(float(scoreCard["scorecard"][0]["overs"]) == 20.0):
+				innings_summary()
+		time.sleep(60)
+		scoreCard = c.scorecard(match_id)
 	return 
 
-def match_summary():  #call when mchstate changes to mom
+def innings_summary():  
+	global scoreCard		
+	#get deets
+	print("Innings",scoreCard["scorecard"][0]["inng_num"],"summary:" )
+	print(scoreCard["scorecard"][0]["runs"],"-",scoreCard["scorecard"][0]["wickets"])
+	print(scoreCard["scorecard"][0]["overs"]," overs")
+	time.sleep(900)
 	return
 
 schedule.every().day.at("00:00").do(match_day_details)
-schedule.every().day.at("19:15").do(toss_squad_details)
+schedule.every().day.at("19:20").do(toss_squad_details)
 
 def beginThread() :
 	thread1 = threading.Thread(target = get_match_details)

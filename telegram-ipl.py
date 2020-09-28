@@ -10,7 +10,7 @@ matches = c.matches()
 for match in matches:
 	if(match["srs"] == "Indian Premier League 2020"):
 		match_id = match["id"]
-		ipl = match
+		ipl = match	
 
 # print(json.dumps(ipl, indent = 4))
 
