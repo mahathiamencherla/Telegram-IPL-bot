@@ -35,10 +35,12 @@ scoreCard = c.scorecard(match_id)
 def addUserId(userList, id):
 	if id not in userList:
 		userList.append(id)
+	return
 
 def removeUserId(userList, id):
 	if id in userList:
 		userList.remove(id)		
+	return
 
 def make_reply(msg, id):
 	global yesFlag
@@ -47,15 +49,11 @@ def make_reply(msg, id):
 	elif msg == "/stop" :
 		allUserIds.remove(id)
 		reply = "Succesfully unsubscribed!"
-	elif msg == "Yes" or msg == "YES" or msg == "yes" or msg == "Y":
+	elif msg.lower() == "yes" or msg.lower() == "Y":
 		reply = "You are going to get match details!"
 		addUserId(overUpdateUserIds,id)
-		yesFlag = True
-		t = time.localtime()
-		current_time = time.strftime("%H%M", t)
-		if(int(current_time) >= 1930):
-			beginThread()
-	elif msg == "no" or msg == "NO" or msg == "No" or msg == "N":	
+		yesFlag = True		
+	elif msg.lower() == "no" or msg.lower() == "N":	
 		reply = "Okay, no match details."
 	elif msg == "/points-table":	
 		table = getPointsTable()
@@ -72,6 +70,14 @@ def make_reply(msg, id):
 def send_to_all(msg):
 	for id in allUserIds:
 		tg_bot.send_message(msg, id)
+	return
+
+def send_over_updates(msg):
+	if overUpdateUserIds == []:
+		return
+	for id in overUpdateUserIds:
+		tg_bot.send_message(msg, id)
+	return
 
 def match_day_details():
 	ipl = refresh_match_details()
@@ -80,6 +86,7 @@ def match_day_details():
 	toss = ipl["toss"]
 	matchDetails = "Upcoming match: %0A"+team1+" Vs. "+team2
 	send_to_all(matchDetails+"%0AStarts at 19:30(ist)")	
+	return
 
 def toss_squad_details():
 	team1 = ipl["team1"]["name"]
@@ -91,15 +98,21 @@ def toss_squad_details():
 	send_to_all("Playing 11 for "+team1+": %0A"+team1Squad)
 	send_to_all("Playing 11 for "+team2+": %0A"+team2Squad)	
 	send_to_all("Do you want detailed updates of the match? (Y/N)")
+	return
 
 def get_match_details():	
 	global scoreCard		
-	while True:		
-		if float(scoreCard["scorecard"][0]["overs"]).is_integer():
-			#get deets
-			print(scoreCard["scorecard"][0]["batteam"], "are batting!")
-			print(scoreCard["scorecard"][0]["runs"],"-",scoreCard["scorecard"][0]["wickets"])
-			print(scoreCard["scorecard"][0]["overs"],"overs")
+	prev_over = 0.0
+	wickets = 0
+	while float(scoreCard["scorecard"][0]["overs"]) != 20.0 and int(scoreCard["scorecard"][0]["inng_num"]) !=2 :
+		if wickets != int(scoreCard["scorecard"][0]["wickets"]):
+			fall_of_wickets()
+			wickets = int(scoreCard["scorecard"][0]["wickets"])
+
+		if float(scoreCard["scorecard"][0]["overs"]).is_integer() and prev_over != float(scoreCard["scorecard"][0]["overs"]):			
+			prev_over = float(scoreCard["scorecard"][0]["overs"])			
+			over_update = scoreCard["scorecard"][0]["batteam"] + " are batting!\n" + scoreCard["scorecard"][0]["runs"] + " - " + scoreCard["scorecard"][0]["wickets"] + "\n" + scoreCard["scorecard"][0]["overs"] + " overs"			
+			send_over_updates(over_update)
 			if(float(scoreCard["scorecard"][0]["overs"]) == 20.0):
 				innings_summary()
 		time.sleep(60)
@@ -107,20 +120,30 @@ def get_match_details():
 	return 
 
 def innings_summary():  
-	global scoreCard		
-	#get deets
-	print("Innings",scoreCard["scorecard"][0]["inng_num"],"summary:" )
-	print(scoreCard["scorecard"][0]["runs"],"-",scoreCard["scorecard"][0]["wickets"])
-	print(scoreCard["scorecard"][0]["overs"]," overs")
+	global scoreCard			
+	inn_sum = "Innings " + scoreCard["scorecard"][0]["inng_num"] + " summary:\n" + scoreCard["scorecard"][0]["runs"] + " - " + scoreCard["scorecard"][0]["wickets"] + "\n" + scoreCard["scorecard"][0]["overs"] + " overs"
+	send_to_all(inn_sum)
 	time.sleep(900)
 	return
 
-schedule.every().day.at("00:00").do(match_day_details)
-schedule.every().day.at("19:20").do(toss_squad_details)
+def fall_of_wickets():
+	fallen_batsman = scoreCard["scorecard"][0]["fall_wickets"].pop()
+	batcard = scoreCard["scorecard"][0]["batcard"]
+	for batsman in batcard:
+		if batsman["name"] == fallen_batsman['name']:
+			dismissal = batsman["dismissal"]
+	msg = fallen_batsman['name'] + " is out!\n" + dismissal + "\n" + fallen_batsman['score'] + " - " + fallen_batsman['wkt_num'] + "\n" + fallen_batsman["overs"] + " overs" 
+	send_over_updates(msg)
+	return
 
 def beginThread() :
 	thread1 = threading.Thread(target = get_match_details)
 	thread1.start()
+	return
+
+schedule.every().day.at("00:00").do(match_day_details)
+schedule.every().day.at("19:20").do(toss_squad_details)
+schedule.every().day.at("21:48").do(beginThread)
 
 while True:
 	schedule.run_pending()

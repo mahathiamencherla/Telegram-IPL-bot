@@ -28,3 +28,18 @@ print(json.dumps(scoreCard, indent = 4))
 # we need MOTM etc
 # upcoming matches --- cricapi 
 #update once wicket happens
+
+
+
+def fall_of_wickets():
+	fallen_batsman = scoreCard["scorecard"][0]["fall_wickets"].pop()
+	msg = fallen_batsman['name']+" is out!\n"+fallen_batsman['score']+" - "+fallen_batsman['wkt_num']+"\n"+fallen_batsman["overs"]+" overs"
+	print(msg)
+
+def innings_summary():  
+	global scoreCard		
+	inn_sum = "Innings " + scoreCard["scorecard"][0]["inng_num"] + " summary:\n" + scoreCard["scorecard"][0]["runs"] + " - " + scoreCard["scorecard"][0]["wickets"] + "\n" + scoreCard["scorecard"][0]["overs"] +" overs"
+	print(inn_sum)	
+
+fall_of_wickets()
+	
