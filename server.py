@@ -11,7 +11,7 @@ tg_bot = telegram_chatbot("config.cfg")
 
 update_id = None
 match_id = None
-
+inn_final = None
 yesFlag = False
 
 matches = c.matches()
@@ -19,7 +19,7 @@ matches = c.matches()
 allUserIds = [] #all subscribed users
 overUpdateUserIds = [] #users who want over by over deets
 
-# Match stats (To be sent with "do you want match details?")
+
 def refresh_match_details(state="inprogress"):
 	global match_id
 	for match in matches:
@@ -37,11 +37,14 @@ def currUpdates():
 	team2 = ipl["team2"]["name"]
 	over_update = team1+" Vs. "+team2+"\n"
 	over_update += "Innings number: " + scoreCard["scorecard"][0]["inng_num"] + "\n"
-	over_update += scoreCard["scorecard"][0]["batteam"] + " are batting!\n" + scoreCard["scorecard"][0]["runs"] + " - " + scoreCard["scorecard"][0]["wickets"] + "\n" + scoreCard["scorecard"][0]["overs"] + " overs"
+	over_update += scoreCard["scorecard"][0]["batteam"] + " are batting!\n" + scoreCard["scorecard"][0]["runs"] + " - " + scoreCard["scorecard"][0]["wickets"] + "\n" + scoreCard["scorecard"][0]["overs"] + " overs\n"
+	batcard = scoreCard["scorecard"][0]["batcard"]
+	for batsman in batcard:
+		if(batsman["dismissal"] == "batting"):
+			over_update += 	batsman["name"] + " - " + batsman["runs"] + "(" + batsman["balls"] + ")\n"
 	return over_update
 
 
-# liveScore = c.livescore(match_id)
 scoreCard = c.scorecard(match_id)
 
 def addUserId(userList, id):
@@ -74,11 +77,11 @@ def make_reply(msg, id):
 		removeUserId(overUpdateUserIds,id)
 		reply = "You won't be getting detailed updates for this match anymore."	
 	elif msg == "/help":
-		reply = "Welcome to the IPL Updates bot.\nUse this as a user guide:\n1. /next-match to get upcoming match details.\n2. /points-table to get updates points table.\nThe bot is going to send you summary updates of every match. If you are prompted with a \"Do you want more match details?\" question, you can answer yes to receive over by over and wicket updates.\nUse /stop-match-details to stop getting over by over and wicket details.\nYou can always use /stop to stop the bot.\nThank you!\nFind the source code on: https://github.com/mahathiamencherla15/Telegram-IPL-bot/ "	
+		reply = "Welcome to the IPL Updates bot.\nUse this as a user guide:\n1. /next-match to get upcoming match details.\n2. /points-table to get updates points table.\n3. The bot is going to send you summary updates of every match. If you are prompted with a \"Do you want more match details?\" question, you can answer yes to receive over by over and wicket updates.\n4. Type \"Give me updates\" to get the current livescore. \n5. Use /stop-match-details to stop getting over by over and wicket details.\nYou can always use /stop to stop the bot.\n\nThank you!\n\n\nFind the source code on: https://github.com/mahathiamencherla15/Telegram-IPL-bot/ "	
 	elif msg == "Give me updates":
 		reply = currUpdates()
 	else:
-		reply = "Welcome to the IPL Updates bot.\nUse this as a user guide:\n1. /next-match to get upcoming match details.\n2. /points-table to get updates points table.\nThe bot is going to send you summary updates of every match. If you are prompted with a \"Do you want more match details?\" question, you can answer yes to receive over by over and wicket updates.\nUse /stop-match-details to stop getting over by over and wicket details.\nYou can always use /stop to stop the bot.\nThank you!\nFind the source code on: https://github.com/mahathiamencherla15/Telegram-IPL-bot/"	
+		reply = "Welcome to the IPL Updates bot.\nUse this as a user guide:\n1. /next-match to get upcoming match details.\n2. /points-table to get updates points table.\n3. The bot is going to send you summary updates of every match. If you are prompted with a \"Do you want more match details?\" question, you can answer yes to receive over by over and wicket updates.\n4. Type \"Give me updates\" to get the current livescore. \n5. Use /stop-match-details to stop getting over by over and wicket details.\nYou can always use /stop to stop the bot.\n\nThank you!\n\n\nFind the source code on: https://github.com/mahathiamencherla15/Telegram-IPL-bot/"	
 	return reply	
 
 def send_to_all(msg):
@@ -115,6 +118,7 @@ def toss_squad_details():
 	return
 
 def get_match_details():
+	global inn_final
 	ipl = refresh_match_details()	
 	global scoreCard		
 	prev_over = 0.0
@@ -123,15 +127,24 @@ def get_match_details():
 		if wickets != int(scoreCard["scorecard"][0]["wickets"]):
 			fall_of_wickets()
 			wickets = int(scoreCard["scorecard"][0]["wickets"])
-
+		if(float(scoreCard["scorecard"][0]["overs"]) == 20.0 and int(scoreCard["scorecard"][0]["inng_num"]) == 1):
+			inn_final = int(scoreCard["scorecard"][0]["runs"])
+		if(inn_final == None):
+			# Do it here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		if float(scoreCard["scorecard"][0]["overs"]).is_integer() and prev_over != float(scoreCard["scorecard"][0]["overs"]):			
 			prev_over = float(scoreCard["scorecard"][0]["overs"])			
-			over_update = scoreCard["scorecard"][0]["batteam"] + " are batting!\n" + scoreCard["scorecard"][0]["runs"] + " - " + scoreCard["scorecard"][0]["wickets"] + "\n" + scoreCard["scorecard"][0]["overs"] + " overs"			
+			over_update = scoreCard["scorecard"][0]["batteam"] + " are batting!\n" + scoreCard["scorecard"][0]["runs"] + " - " + scoreCard["scorecard"][0]["wickets"] + "\n" + scoreCard["scorecard"][0]["overs"] + " overs\n"
+			batcard = scoreCard["scorecard"][0]["batcard"]
+			for batsman in batcard:
+				if(batsman["dismissal"] == "batting"):
+					over_update += 	batsman["name"] + " - " + batsman["runs"] + "(" + batsman["balls"] + ")\n"
+			if(int(scoreCard["scorecard"][0]["inng_num"]) == 2):
+				over_update += (inn_final - scoreCard["scorecard"][0]["runs"]) + " runs required from "	+ (120-(scoreCard["scorecard"][0]["overs"]*6)) +" balls."	
 			send_over_updates(over_update)			
 			if(float(scoreCard["scorecard"][0]["overs"]) == 20.0):
 				innings_summary()
 		time.sleep(60)
-		scoreCard = c.scorecard(match_id)
+		scoreCard = c.scorecard(match_id)	
 	return 
 
 def innings_summary():  

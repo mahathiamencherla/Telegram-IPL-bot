@@ -38,7 +38,7 @@ def getPointsTable() :
 
 def pointsTableParser(table):
 	beautyTable = "Teams    Played    Won    Lost    Tied      Net RR\n"
-	table[0] = [i.ljust(10,'-') for i in table[0]]
+	table[0] = [i.ljust(10,' ') for i in table[0]]
 	# print("Teams\tPlayed\tWon\tLost\tTied\t Net RR")
 	for i in range(len(table)):
 		print(len(table[0][i]))

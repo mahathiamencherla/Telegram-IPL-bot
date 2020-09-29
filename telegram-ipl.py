@@ -8,7 +8,7 @@ matches = c.matches()
 
 # Match stats (To be sent with "do you want match details?")
 for match in matches:
-	if(match["srs"] == "Indian Premier League 2020" ):
+	if(match["srs"] == "Indian Premier League 2020" and match["mchstate"] == "inprogress"):
 		match_id = match["id"]
 		ipl = match	
 		print(ipl)
@@ -21,13 +21,11 @@ for match in matches:
 # print(json.dumps(liveScore, indent = 4))
 
 # # summary after every innings (when score["overs"] is 20 and inns_num is 1 and 2) 
-# scoreCard = c.scorecard(match_id)
+scoreCard = c.scorecard(match_id)
 
-# print(json.dumps(scoreCard, indent = 4))
+print(json.dumps(scoreCard, indent = 4))
 
-# we need points table --- scrape off google or cricbuzz (???)
 # we need MOTM etc
-# upcoming matches --- cricapi 
 #update once wicket happens
 
 
