@@ -4,6 +4,7 @@ import json
 import threading
 import schedule
 import time
+import math
 from pointsTable import *
 
 c = Cricbuzz()
@@ -11,7 +12,7 @@ tg_bot = telegram_chatbot("config.cfg")
 
 update_id = None
 match_id = None
-inn_final = None
+inn_final = 163
 yesFlag = False
 
 matches = c.matches()
@@ -31,6 +32,7 @@ def refresh_match_details(state="inprogress"):
 ipl = refresh_match_details() 
 
 def currUpdates():
+	global inn_final
 	ipl = refresh_match_details() 
 	scoreCard = c.scorecard(match_id)
 	team1 = ipl["team1"]["name"]
@@ -42,6 +44,10 @@ def currUpdates():
 	for batsman in batcard:
 		if(batsman["dismissal"] == "batting"):
 			over_update += 	batsman["name"] + " - " + batsman["runs"] + "(" + batsman["balls"] + ")\n"
+	if(int(scoreCard["scorecard"][0]["inng_num"]) == 2):
+		curr_balls = float(scoreCard["scorecard"][0]["overs"])
+		over_update += str((inn_final - int(scoreCard["scorecard"][0]["runs"]))) + " runs required from "	+ str(int(120-((math.floor(curr_balls)*6)+(curr_balls*10)%10))) +" balls."	
+
 	return over_update
 
 
@@ -128,8 +134,9 @@ def get_match_details():
 			fall_of_wickets()
 			wickets = int(scoreCard["scorecard"][0]["wickets"])
 		if(float(scoreCard["scorecard"][0]["overs"]) == 20.0 and int(scoreCard["scorecard"][0]["inng_num"]) == 1):
-			inn_final = int(scoreCard["scorecard"][0]["runs"])
-		if(inn_final == None):
+			inn_final = int(scoreCard["scorecard"][0]["runs"]) + 1
+		# if(inn_final == None):
+
 			# Do it here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		if float(scoreCard["scorecard"][0]["overs"]).is_integer() and prev_over != float(scoreCard["scorecard"][0]["overs"]):			
 			prev_over = float(scoreCard["scorecard"][0]["overs"])			
@@ -139,7 +146,8 @@ def get_match_details():
 				if(batsman["dismissal"] == "batting"):
 					over_update += 	batsman["name"] + " - " + batsman["runs"] + "(" + batsman["balls"] + ")\n"
 			if(int(scoreCard["scorecard"][0]["inng_num"]) == 2):
-				over_update += (inn_final - scoreCard["scorecard"][0]["runs"]) + " runs required from "	+ (120-(scoreCard["scorecard"][0]["overs"]*6)) +" balls."	
+				curr_balls = float(scoreCard["scorecard"][0]["overs"])
+				over_update += str((inn_final - int(scoreCard["scorecard"][0]["runs"]))) + " runs required from "	+ str(int(120-((math.floor(curr_balls)*6)+(curr_balls*10)%10))) +" balls."	
 			send_over_updates(over_update)			
 			if(float(scoreCard["scorecard"][0]["overs"]) == 20.0):
 				innings_summary()
