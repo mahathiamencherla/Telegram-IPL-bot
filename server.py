@@ -20,10 +20,10 @@ allUserIds = [] #all subscribed users
 overUpdateUserIds = [] #users who want over by over deets
 
 # Match stats (To be sent with "do you want match details?")
-def refresh_match_details():
+def refresh_match_details(state="inprogress"):
 	global match_id
 	for match in matches:
-		if(match["srs"] == "Indian Premier League 2020"):
+		if(match["srs"] == "Indian Premier League 2020" and match["mchstate"]== state):
 			match_id = match["id"]
 			ipl = match
 	return ipl		
@@ -94,15 +94,15 @@ def send_over_updates(msg):
 	return
 
 def match_day_details():
-	ipl = refresh_match_details()
+	ipl = refresh_match_details("preview")
 	team1 = ipl["team1"]["name"]
 	team2 = ipl["team2"]["name"]
-	toss = ipl["toss"]
 	matchDetails = "Upcoming match: %0A"+team1+" Vs. "+team2
 	send_to_all(matchDetails+"%0AStarts at 19:30(ist)")	
 	return
 
 def toss_squad_details():
+	ipl = refresh_match_details("preview")
 	team1 = ipl["team1"]["name"]
 	team2 = ipl["team2"]["name"]
 	team1Squad = "%0A".join(ipl["team1"]["squad"])
@@ -114,7 +114,8 @@ def toss_squad_details():
 	send_to_all("Do you want detailed updates of the match? (Y/N)")
 	return
 
-def get_match_details():	
+def get_match_details():
+	ipl = refresh_match_details()	
 	global scoreCard		
 	prev_over = 0.0
 	wickets = 0
