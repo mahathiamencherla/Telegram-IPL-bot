@@ -29,6 +29,18 @@ def refresh_match_details():
 	return ipl		
 
 ipl = refresh_match_details() 
+
+def currUpdates():
+	ipl = refresh_match_details() 
+	scoreCard = c.scorecard(match_id)
+	team1 = ipl["team1"]["name"]
+	team2 = ipl["team2"]["name"]
+	over_update = team1+" Vs. "+team2+"\n"
+	over_update += "Innings number: " + scoreCard["scorecard"][0]["inng_num"] + "\n"
+	over_update += scoreCard["scorecard"][0]["batteam"] + " are batting!\n" + scoreCard["scorecard"][0]["runs"] + " - " + scoreCard["scorecard"][0]["wickets"] + "\n" + scoreCard["scorecard"][0]["overs"] + " overs"
+	return over_update
+
+
 # liveScore = c.livescore(match_id)
 scoreCard = c.scorecard(match_id)
 
@@ -46,8 +58,6 @@ def make_reply(msg, id):
 	global yesFlag
 	if msg == None:
 		return
-	elif msg=="Give me updates":
-		reply = json.dumps(ipl, indent = 4)
 	elif msg == "/stop" :
 		allUserIds.remove(id)
 		reply = "Succesfully unsubscribed!"
@@ -65,8 +75,10 @@ def make_reply(msg, id):
 		reply = "You won't be getting detailed updates for this match anymore."	
 	elif msg == "/help":
 		reply = "Welcome to the IPL Updates bot.\nUse this as a user guide:\n1. /next-match to get upcoming match details.\n2. /points-table to get updates points table.\nThe bot is going to send you summary updates of every match. If you are prompted with a \"Do you want more match details?\" question, you can answer yes to receive over by over and wicket updates.\nUse /stop-match-details to stop getting over by over and wicket details.\nYou can always use /stop to stop the bot.\nThank you!\nFind the source code on: https://github.com/mahathiamencherla15/Telegram-IPL-bot/ "	
+	elif msg == "Give me updates":
+		reply = currUpdates()
 	else:
-		reply = "Type: Give me updates"	
+		reply = "Welcome to the IPL Updates bot.\nUse this as a user guide:\n1. /next-match to get upcoming match details.\n2. /points-table to get updates points table.\nThe bot is going to send you summary updates of every match. If you are prompted with a \"Do you want more match details?\" question, you can answer yes to receive over by over and wicket updates.\nUse /stop-match-details to stop getting over by over and wicket details.\nYou can always use /stop to stop the bot.\nThank you!\nFind the source code on: https://github.com/mahathiamencherla15/Telegram-IPL-bot/"	
 	return reply	
 
 def send_to_all(msg):
