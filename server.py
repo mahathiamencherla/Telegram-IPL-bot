@@ -184,7 +184,7 @@ def get_match_details():
 	#MOTM	
 	while True:
 		if get_MOTM(match_id):
-			MOTM = "The man of the match is " + "get_MOTM(match_id)"
+			MOTM = "The man of the match is " + get_MOTM(match_id)
 			send_to_all(MOTM)
 			break
 	return 	
