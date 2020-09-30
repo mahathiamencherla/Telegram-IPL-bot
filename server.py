@@ -92,7 +92,7 @@ def make_reply(msg, id):
 	elif msg == "/next_match":
 		reply = match_day_details(True)
 	elif msg == "/help":
-		reply = "Welcome to the IPL Updates bot!\n\nUse this as a user guide:\n1. /next_match to get upcoming match details.\n2. /points_table to get updates points table.\n3. The bot is going to send you summary updates of every match. If you are prompted with a \"Do you want more match details?\" question, you can answer yes to receive over by over and wicket updates.\n4. Type \"Give me updates\" to get the current livescore. \n5. /get_updates to get over by over updates  \n6. /stop_match_details to stop getting over by over and wicket details.\nYou can always use /stop to stop the bot.\n\nThank you!\n\n\nFind the source code on: https://github.com/mahathiamencherla15/Telegram-IPL-bot/ "	
+		reply = "Welcome to the IPL Updates bot!\n\nUse this as a user guide:\n1. /next_match to get upcoming match details.\n2. /points_table to get updates points table.\n3. The bot is going to send you summary updates of every match. If you are prompted with a \"Do you want more match details?\" question, you can answer yes to receive over by over and wicket updates.\n4. Type \"Give me updates\" to get the current livescore. \n5. /get_updates to get over by over updates.  \n6. /stop_match_details to stop getting over by over and wicket details.\nYou can always use /stop to stop the bot.\n\nThank you!\n\n\nFind the source code on: https://github.com/mahathiamencherla15/Telegram-IPL-bot/ "	
 	elif msg == "Give me updates":
 		curr_time = int(time.strftime('%H%M', time.localtime(t)))
 		if curr_time > 1930 and curr_time <= 2359:
@@ -100,7 +100,7 @@ def make_reply(msg, id):
 		else:
 			reply = match_day_details(True)
 	else:
-		reply = "Welcome to the IPL Updates bot!\n\nUse this as a user guide:\n1. /next_match to get upcoming match details.\n2. /points_table to get updates points table.\n3. The bot is going to send you summary updates of every match. If you are prompted with a \"Do you want more match details?\" question, you can answer yes to receive over by over and wicket updates.\n4. Type \"Give me updates\" to get the current livescore. \n5. /get_updates to get over by over updates  \n6. /stop_match_details to stop getting over by over and wicket details.\nYou can always use /stop to stop the bot.\n\nThank you!\n\n\nFind the source code on: https://github.com/mahathiamencherla15/Telegram-IPL-bot/ "	
+		reply = "Welcome to the IPL Updates bot!\n\nUse this as a user guide:\n1. /next_match to get upcoming match details.\n2. /points_table to get updates points table.\n3. The bot is going to send you summary updates of every match. If you are prompted with a \"Do you want more match details?\" question, you can answer yes to receive over by over and wicket updates.\n4. Type \"Give me updates\" to get the current livescore. \n5. /get_updates to get over by over updates.  \n6. /stop_match_details to stop getting over by over and wicket details.\nYou can always use /stop to stop the bot.\n\nThank you!\n\n\nFind the source code on: https://github.com/mahathiamencherla15/Telegram-IPL-bot/ "	
 	return reply	
 
 def send_to_all(msg):
@@ -177,7 +177,7 @@ def get_match_details():
 	while True:
 		if get_match_summary(match_id):
 			scoreCard = c.scorecard(match_id)
-			end_of_match = "The match has ended\n"+scoreCard["scorecard"][0]["batteam"] + "'s Final score:" + scoreCard["scorecard"][0]["runs"] + " - " + scoreCard["scorecard"][0]["wickets"] + "\n" + scoreCard["scorecard"][0]["overs"] + " overs\n"
+			end_of_match = "The match has ended\n"+scoreCard["scorecard"][0]["batteam"] + "'s final score: " + scoreCard["scorecard"][0]["runs"] + " - " + scoreCard["scorecard"][0]["wickets"] + "\n" + scoreCard["scorecard"][0]["overs"] + " overs\n"
 			end_of_match += get_match_summary(match_id)
 			send_to_all(end_of_match)
 			break
@@ -210,10 +210,10 @@ def beginThread() :
 	thread1.start()
 	return
 
-schedule.every().day.at("00:32").do(match_day_details)
+schedule.every().day.at("00:00").do(match_day_details)
 schedule.every().day.at("19:20").do(toss_squad_details)
-#schedule.every().day.at("19:20 PDT").do(beginThread)
-beginThread()
+schedule.every().day.at("19:20").do(beginThread)
+# beginThread()
 
 while True:
 	schedule.run_pending()
