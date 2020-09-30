@@ -1,6 +1,5 @@
 import requests
 import time
-from lxml.html import fromstring
 from itertools import cycle
 import traceback
 from bs4 import BeautifulSoup
