@@ -1,5 +1,5 @@
 from bot import telegram_chatbot
-# from pycricbuzz import Cricbuzz
+#from pycricbuzz import Cricbuzz
 from Criccbuzz import *
 import json
 import threading
@@ -7,6 +7,7 @@ import schedule
 import time
 import math
 from pointsTable import *
+from match_summary import *
 
 c = Cricbuzz()
 tg_bot = telegram_chatbot("config.cfg")  
@@ -33,7 +34,13 @@ def refresh_match_details(state="inprogress"):
 
 def currUpdates():
 	global inn_final
-	ipl = refresh_match_details() 
+	try:
+		ipl = refresh_match_details() 
+	except UnboundLocalError:
+		try:
+			ipl = refresh_match_details("complete")
+		except UnboundLocalError:
+				ipl = refresh_match_details("mom")
 	scoreCard = c.scorecard(match_id)
 	team1 = ipl["team1"]["name"]
 	team2 = ipl["team2"]["name"]
@@ -134,7 +141,13 @@ def toss_squad_details():
 
 def get_match_details():
 	global inn_final
-	ipl = refresh_match_details()	
+	try:
+		ipl = refresh_match_details() 
+	except UnboundLocalError:
+		try:
+			ipl = refresh_match_details("complete")
+		except UnboundLocalError:
+				ipl = refresh_match_details("mom")		
 	scoreCard = c.scorecard(match_id)
 	prev_over = 0.0
 	wickets = 0
@@ -197,7 +210,7 @@ def beginThread() :
 	thread1.start()
 	return
 
-schedule.every().day.at("00:00").do(match_day_details)
+schedule.every().day.at("00:30").do(match_day_details)
 schedule.every().day.at("19:20").do(toss_squad_details)
 #schedule.every().day.at("19:20 PDT").do(beginThread)
 beginThread()
