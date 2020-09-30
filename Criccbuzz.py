@@ -1,12 +1,44 @@
 import requests
 import time
+from lxml.html import fromstring
+from itertools import cycle
+import traceback
+from bs4 import BeautifulSoup
+
+
+# def get_proxies():
+# 	url = 'https://free-proxy-list.net/'
+# 	req = requests.get(url, "lxml")
+# 	soup = BeautifulSoup(req.content, 'html.parser')
+
+# 	tables = soup.findChildren('table')
+# 	my_table = tables[0]
+# 	rows = my_table.findChildren(['tr'])
+#     # response = requests.get(url)
+#     # parser = fromstring(response.text)
+#     # print(parser)
+# 	proxies = set()
+# 	for row in rows:
+# 		ip = row.findChildren('td')
+# 		if(len(ip) > 0):
+# 				proxy = 'http://' + ip[0].string + ":" + ip[1].string
+# 				proxies.add(proxy)
+#     # for i in parser.xpath('//tbody/tr')[:10]:
+#     #     print(i)
+#     #     if i.xpath('.//td[7][contains(text(),"yes")]'):
+#     #         #Grabbing IP and corresponding PORT
+#     #         proxy = ":".join([i.xpath('.//td[1]/text()')[0], i.xpath('.//td[2]/text()')[0]])
+#     #         print(proxy)
+#     #         proxies.add(proxy)
+# 	return proxies
+
+# proxies = get_proxies() 
+
+# proxy_pool = cycle(proxies)
 
 proxies = {
-  'https': 'https://103.57.70.248',
-  'https': 'https://122.102.27.175',
-  'https': 'https://49.248.32.110',
-  'https': 'https://43.225.192.241',
-  'https': 'https://182.72.150.242',
+	"http": 'http://185.175.76.21:80', 
+    "https": 'http://58.11.59.192:80'
 }
 
 class Cricbuzz():
@@ -15,6 +47,15 @@ class Cricbuzz():
 
 	def crawl_url(self,url):
 		try:
+			# for i in range(1,21):
+			# 	proxy = next(proxy_pool)
+			# 	try:
+			# 		response = requests.get(url,proxies={"http": proxy, "https": proxy})
+			# 		return response.json()
+			# 	except:
+			#         #Most free proxies will often get connection errors. You will have retry the entire request using another proxy to work. 
+			#         #We will just skip retries as its beyond the scope of this tutorial and we are only downloading a single url 
+			# 		print("Skipping. Connnection error")
 			r = requests.get(url, proxies=proxies).json()
 			return r
 		except Exception:
