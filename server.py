@@ -1,5 +1,6 @@
 from bot import telegram_chatbot
-from pycricbuzz import Cricbuzz
+# from pycricbuzz import Cricbuzz
+from Criccbuzz import *
 import json
 import threading
 import schedule

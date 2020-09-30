@@ -1,6 +1,7 @@
 #telegram Bot
 import json
-from pycricbuzz import Cricbuzz
+# from pycricbuzz import Cricbuzz
+from Criccbuzz import *
 
 c = Cricbuzz()
 match_id = None
@@ -23,10 +24,10 @@ for match in matches:
 
 # # summary after every innings (when score["overs"] is 20 and inns_num is 1 and 2) 
 scoreCard = c.scorecard(match_id)
-#print(json.dumps(scoreCard, indent = 4))
+print(json.dumps(scoreCard, indent = 4))
 #print(json.dumps(scoreCard["scorecard"][0], indent = 4))	
 #print(json.dumps(scoreCard["scorecard"][1], indent = 4))	
-print(scoreCard["scorecard"][1]["runs"])
+# print(scoreCard["scorecard"][1]["runs"])
 #print(scoreCard["scorecard"][::-1]["runs"])
 
 # match_info = c.matchinfo(match_id)
