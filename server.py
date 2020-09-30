@@ -160,8 +160,7 @@ def get_match_details():
 			if(float(scoreCard["scorecard"][0]["overs"]) == 20.0):
 				innings_summary(scoreCard)
 		time.sleep(60)
-		scoreCard = c.scorecard(match_id)
-	#match end
+		scoreCard = c.scorecard(match_id)	
 	while True:
 		if get_match_summary(match_id):
 			scoreCard = c.scorecard(match_id)
@@ -175,7 +174,7 @@ def get_match_details():
 			MOTM = "The man of the match is " + "get_MOTM(match_id)"
 			send_to_all(MOTM)
 			break
-	return 
+	return 	
 
 def innings_summary(scoreCard):  	
 	inn_sum = "Innings " + scoreCard["scorecard"][0]["inng_num"] + " summary:\n" + scoreCard["scorecard"][0]["runs"] + " - " + scoreCard["scorecard"][0]["wickets"] + "\n" + scoreCard["scorecard"][0]["overs"] + " overs"
@@ -198,9 +197,9 @@ def beginThread() :
 	thread1.start()
 	return
 
-schedule.every().day.at("00:00").do(match_day_details)
-schedule.every().day.at("19:20").do(toss_squad_details)
-#schedule.every().day.at("19:30").do(beginThread)
+schedule.every().day.at("12:00 PDT").do(match_day_details)
+schedule.every().day.at("07:20 PDT").do(toss_squad_details)
+#schedule.every().day.at("19:20 PDT").do(beginThread)
 beginThread()
 
 while True:
