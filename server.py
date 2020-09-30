@@ -210,7 +210,7 @@ def beginThread() :
 	thread1.start()
 	return
 
-schedule.every().day.at("00:30").do(match_day_details)
+schedule.every().day.at("00:32").do(match_day_details)
 schedule.every().day.at("19:20").do(toss_squad_details)
 #schedule.every().day.at("19:20 PDT").do(beginThread)
 beginThread()
