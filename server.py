@@ -7,7 +7,6 @@ import schedule
 import time
 import math
 from pointsTable import *
-from dateutil import *
 
 c = Cricbuzz()
 tg_bot = telegram_chatbot("config.cfg")  
