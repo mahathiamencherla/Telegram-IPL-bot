@@ -6,7 +6,9 @@ from bs4 import BeautifulSoup
 
 proxies = {
 	"http": 'http://185.175.76.21:80', 
-    "https": 'http://58.11.59.192:80'
+    "https": 'http://58.11.59.192:80',
+    "https": 'http://103.39.10.170:51203',
+    "https": 'http://1717.196.233.21:8080'
 }
 
 class Cricbuzz():
