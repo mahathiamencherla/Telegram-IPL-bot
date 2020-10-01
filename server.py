@@ -81,7 +81,7 @@ def make_reply(msg, id):
 		reply = "You are going to get match details!"
 		addUserId(overUpdateUserIds,id)
 		yesFlag = True		
-	elif msg.lower() == "no" or msg.lower() == "y":	
+	elif msg.lower() == "no" or msg.lower() == "n":	
 		reply = "Okay, no match details."
 	elif msg == "/points_table":	
 		table = getPointsTable()
