@@ -77,11 +77,11 @@ def make_reply(msg, id):
 	elif msg == "/stop" :
 		allUserIds.remove(id)
 		reply = "Succesfully unsubscribed!"
-	elif msg.lower() == "yes" or msg.lower() == "Y" or msg == "/get_updates":
+	elif msg.lower() == "yes" or msg.lower() == "y" or msg == "/get_updates":
 		reply = "You are going to get match details!"
 		addUserId(overUpdateUserIds,id)
 		yesFlag = True		
-	elif msg.lower() == "no" or msg.lower() == "N":	
+	elif msg.lower() == "no" or msg.lower() == "y":	
 		reply = "Okay, no match details."
 	elif msg == "/points_table":	
 		table = getPointsTable()
@@ -117,14 +117,15 @@ def send_over_updates(msg):
 
 def match_day_details(replyBackToUser = False):
 	ipl = refresh_match_details("preview")
-	team1 = ipl["team1"]["name"]
-	team2 = ipl["team2"]["name"]
-	matchDetails = "Upcoming match: %0A"+team1+" Vs. "+team2
-	if replyBackToUser:
-		return (matchDetails+"%0AStarts at 19:30(ist)")
-	else:
-		send_to_all(matchDetails+"%0AStarts at 19:30(ist)")	
-		return
+	if (ipl):
+		team1 = ipl["team1"]["name"]
+		team2 = ipl["team2"]["name"]
+		matchDetails = "Upcoming match: %0A"+team1+" Vs. "+team2
+		if replyBackToUser:
+			return (matchDetails+"%0AStarts at 19:30(ist)")
+		else:
+			send_to_all(matchDetails+"%0AStarts at 19:30(ist)")	
+	return
 
 def toss_squad_details():
 	ipl = refresh_match_details("preview")
@@ -211,8 +212,8 @@ def beginThread() :
 	return
 
 schedule.every().day.at("00:00").do(match_day_details)
-schedule.every().day.at("19:20").do(toss_squad_details)
-schedule.every().day.at("19:20").do(beginThread)
+schedule.every().day.at("19:35").do(toss_squad_details)
+schedule.every().day.at("19:30").do(beginThread)
 # beginThread()
 
 while True:
