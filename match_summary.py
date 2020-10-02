@@ -10,7 +10,7 @@ proxies = {
 
 def get_MOTM(match_id):
 	url = "https://mapps.cricbuzz.com/cbzios/match/{}/".format(match_id)
-	r = requests.get(url, proxies=proxies, verify=false).json()
+	r = requests.get(url, proxies=proxies, verify=False).json()
 	try :
 		manOfTheMatch = r["header"]["momNames"].pop()
 	except:

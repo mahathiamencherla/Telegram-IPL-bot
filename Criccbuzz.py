@@ -18,7 +18,7 @@ class Cricbuzz():
 
 	def crawl_url(self,url):
 		try:
-			r = requests.get(url, proxies=proxies, verify=false).json()
+			r = requests.get(url, proxies=proxies, verify=False).json()
 			return r
 		except Exception:
 			raise
