@@ -129,15 +129,16 @@ def match_day_details(replyBackToUser = False):
 
 def toss_squad_details():
 	ipl = refresh_match_details("preview")
-	team1 = ipl["team1"]["name"]
-	team2 = ipl["team2"]["name"]
-	team1Squad = "%0A".join(ipl["team1"]["squad"])
-	team2Squad = "%0A".join(ipl["team2"]["squad"])
-	toss = ipl["toss"].replace("elect","won the toss and elected")
-	send_to_all(toss)
-	send_to_all("Playing 11 for "+team1+": %0A"+team1Squad)
-	send_to_all("Playing 11 for "+team2+": %0A"+team2Squad)	
-	send_to_all("Do you want detailed updates of the match? (Y/N)")
+	if (ipl):
+		team1 = ipl["team1"]["name"]
+		team2 = ipl["team2"]["name"]
+		team1Squad = "%0A".join(ipl["team1"]["squad"])
+		team2Squad = "%0A".join(ipl["team2"]["squad"])
+		toss = ipl["toss"].replace("elect","won the toss and elected")
+		send_to_all(toss)
+		send_to_all("Playing 11 for "+team1+": %0A"+team1Squad)
+		send_to_all("Playing 11 for "+team2+": %0A"+team2Squad)	
+		send_to_all("Do you want detailed updates of the match? (Y/N)")
 	return
 
 def get_match_details():
