@@ -18,7 +18,8 @@ class Cricbuzz():
 			try:
 				r = requests.get(url, proxies=proxy).json()
 				return r
-			except Exception:
+			except Exception as e:
+				print(e)
 				proxy["https"] = get_working_proxy()
 			
 	def players_mapping(self,mid):
