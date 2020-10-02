@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 
-
+print("pintsTable.py start")
 def getPointsTable() :
 	url = "https://www.iplt20.com/points-table/2020"
 

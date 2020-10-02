@@ -126,9 +126,9 @@ def match_day_details(replyBackToUser = False):
 		team2 = ipl["team2"]["name"]
 		matchDetails = "Upcoming match: %0A"+team1+" Vs. "+team2
 		if replyBackToUser:
-			return (matchDetails+"%0AStarts at 19:30(ist)")
+			return (matchDetails+"%0AStarts at 19:30(IST)")
 		else:
-			send_to_all(matchDetails+"%0AStarts at 19:30(ist)")	
+			send_to_all(matchDetails+"%0AStarts at 19:30(IST)")	
 	return
 
 def toss_squad_details():

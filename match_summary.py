@@ -2,6 +2,7 @@ import requests
 import json
 from proxy import *
 
+print("match_summmary.py start")
 proxy = {"https": get_working_proxy()}
 print("FirstmatchSummary ",proxy)
 
@@ -12,7 +13,7 @@ def get_MOTM(match_id):
 	global proxy
 	while True:
 		print("in MOTM whileloop")
-		print("inmatchSummary ",proxy)
+		print("in MOTM IP: ",proxy)
 		try:
 			r = requests.get(url, proxies=proxy).json()
 			break

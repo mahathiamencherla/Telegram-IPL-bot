@@ -21,6 +21,7 @@ def get_proxies():
     return proxies
 print("proxy.py")
 proxies = get_proxies()
+print("got proxy")
 
 def get_working_proxy():    
     url = "https://mapps.cricbuzz.com/cbzios/match/livematches"
