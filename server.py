@@ -144,9 +144,7 @@ def toss_squad_details():
 			toss = ipl["toss"].replace("elect","won the toss and elected")
 			send_to_all(toss)
 			send_to_all("Playing 11 for "+team1+": %0A"+team1Squad)
-			send_to_all("Playing 11 for "+team2+": %0A"+team2Squad)	
-		send_to_all("Playing 11 for "+team2+": %0A"+team2Squad)	
-			send_to_all("Playing 11 for "+team2+": %0A"+team2Squad)	
+			send_to_all("Playing 11 for "+team2+": %0A"+team2Squad)				
 			send_to_all("Do you want detailed updates of the match? (Y/N)")
 			break
 	return
