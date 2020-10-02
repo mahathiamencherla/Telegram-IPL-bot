@@ -172,6 +172,7 @@ def get_match_details():
 				over_update += str((inn_final - int(scoreCard["scorecard"][0]["runs"]))) + " runs required from "	+ str(int(120-((math.floor(curr_balls)*6)+(curr_balls*10)%10))) +" balls."	
 			send_over_updates(over_update)			
 			if(float(scoreCard["scorecard"][0]["overs"]) == 20.0):
+				wicket = 0
 				innings_summary(scoreCard)
 		time.sleep(60)
 		scoreCard = c.scorecard(match_id)	
