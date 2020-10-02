@@ -187,7 +187,7 @@ def get_match_details():
 			if(float(scoreCard["scorecard"][0]["overs"]) == 20.0):
 				wickets = 0
 				innings_summary(scoreCard)
-		time.sleep(60)
+		time.sleep(90)
 		scoreCard = c.scorecard(match_id)	
 	while True:
 		if get_match_summary(match_id):
