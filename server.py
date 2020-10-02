@@ -189,15 +189,19 @@ def get_match_details():
 				innings_summary(scoreCard)
 		time.sleep(90)
 		scoreCard = c.scorecard(match_id)	
+	print("match over")
 	while True:
+		print("match over in true loop 1")
 		if get_match_summary(match_id):
 			scoreCard = c.scorecard(match_id)
 			end_of_match = "The match has ended\n"+scoreCard["scorecard"][0]["batteam"] + "'s final score: " + scoreCard["scorecard"][0]["runs"] + " - " + scoreCard["scorecard"][0]["wickets"] + "\n" + scoreCard["scorecard"][0]["overs"] + " overs\n"
 			end_of_match += get_match_summary(match_id)
 			send_to_all(end_of_match)
 			break
+	print("MOTM")
 	#MOTM	
 	while True:
+		print("match over in true loop 2")
 		if get_MOTM(match_id):
 			MOTM = "The man of the match is " + get_MOTM(match_id)
 			send_to_all(MOTM)
