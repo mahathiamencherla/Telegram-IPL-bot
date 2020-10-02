@@ -1,14 +1,23 @@
 import requests
 import json
+from proxy import *
 
-proxies = {
-	"http": 'http://185.175.76.21:80', 
-    "https": 'http://58.11.59.192:80'
-}
+proxy = {"https": get_working_proxy()}
+print("FirstmatchSummary ",proxy)
 
 def get_MOTM(match_id):
+	print("in MOTM")
 	url = "https://mapps.cricbuzz.com/cbzios/match/{}/".format(match_id)
-	r = requests.get(url, proxies=proxies).json()
+	# r = requests.get(url, proxies=proxies).json()
+	global proxy
+	while True:
+		print("in MOTM whileloop")
+		print("inmatchSummary ",proxy)
+		try:
+			r = requests.get(url, proxies=proxy).json()
+			break
+		except Exception:
+			proxy["https"] = get_working_proxy()
 	try :
 		manOfTheMatch = r["header"]["momNames"].pop()
 	except:
@@ -16,12 +25,19 @@ def get_MOTM(match_id):
 	return manOfTheMatch
 
 def get_match_summary(match_id):
+	print("in matchSUM")
+	global proxy
 	url = "https://mapps.cricbuzz.com/cbzios/match/{}/".format(match_id)
 	state = None
-	while not(state == "complete"):
-		if state == "mom":  #you can remove this later
-			break           # i put it rn thats all to prevent infinte loop
-		r = requests.get(url, proxies=proxies).json()
+	while not(state == "complete" or state == "mom"):		
+		print("in matchSUM whileloop")
+		while True:
+			try:
+				r = requests.get(url, proxies=proxy).json()
+				break
+			except Exception:
+				proxy["https"] = get_working_proxy()
 		state = r["header"]["state"]	
 	status = r["header"]["status"]
 	return status
+

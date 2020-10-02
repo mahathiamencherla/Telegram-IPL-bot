@@ -9,7 +9,9 @@ import math
 from pointsTable import *
 from match_summary import *
 
+print("server.py   1")
 c = Cricbuzz()
+print("server.py   2")
 tg_bot = telegram_chatbot("config.cfg")  
 
 update_id = None
@@ -17,7 +19,9 @@ match_id = None
 inn_final = 163
 yesFlag = False
 
+print("server.py   4")
 matches = c.matches()
+print("server.py   5")
 
 allUserIds = [] #all subscribed users
 overUpdateUserIds = [] #users who want over by over deets
@@ -141,14 +145,18 @@ def toss_squad_details():
 	return
 
 def get_match_details():
+	print(1)
 	global inn_final
 	try:
+		print(2)
 		ipl = refresh_match_details() 
 	except UnboundLocalError:
+		print(3)
 		try:
 			ipl = refresh_match_details("complete")
 		except UnboundLocalError:
-				ipl = refresh_match_details("mom")		
+			print(4)
+			ipl = refresh_match_details("mom")		
 	scoreCard = c.scorecard(match_id)
 	prev_over = 0.0
 	wickets = 0
@@ -176,18 +184,28 @@ def get_match_details():
 				innings_summary(scoreCard)
 		time.sleep(60)
 		scoreCard = c.scorecard(match_id)	
+	print("not")
 	while True:
-		if get_match_summary(match_id):
+		print(5)
+		match_summarry = get_match_summary(match_id)
+		if match_summarry :
+			print(6)
 			scoreCard = c.scorecard(match_id)
 			end_of_match = "The match has ended\n"+scoreCard["scorecard"][0]["batteam"] + "'s final score: " + scoreCard["scorecard"][0]["runs"] + " - " + scoreCard["scorecard"][0]["wickets"] + "\n" + scoreCard["scorecard"][0]["overs"] + " overs\n"
-			end_of_match += get_match_summary(match_id)
+			end_of_match += match_summarry
 			send_to_all(end_of_match)
+			print(end_of_match)
 			break
 	#MOTM	
+	print(7)
 	while True:
-		if get_MOTM(match_id):
-			MOTM = "The man of the match is " + get_MOTM(match_id)
+		print(8)
+		MOTM_name = get_MOTM(match_id)
+		if MOTM_name:
+			print(9)
+			MOTM = "The man of the match is " + MOTM_name
 			send_to_all(MOTM)
+			print(MOTM)
 			break
 	return 	
 
@@ -208,14 +226,17 @@ def fall_of_wickets(scoreCard):
 	return
 
 def beginThread() :	
+	print("Thread Begins")
 	thread1 = threading.Thread(target = get_match_details)
 	thread1.start()
 	return
 
+print("server.py   6")
 schedule.every().day.at("00:00").do(match_day_details)
 schedule.every().day.at("19:25").do(toss_squad_details)
-# schedule.every().day.at("19:30").do(beginThread)
-beginThread()
+schedule.every().day.at("19:30").do(beginThread)
+# beginThread()
+print("server.py   7")
 
 while True:
 	schedule.run_pending()

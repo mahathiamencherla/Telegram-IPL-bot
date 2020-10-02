@@ -1,27 +1,25 @@
 import requests
 import time
-from itertools import cycle
-import traceback
+from proxy import *
 from bs4 import BeautifulSoup
 
-proxies = {
-	"http": 'http://185.175.76.21:80', 
-    "https": 'http://58.11.59.192:80',
-    "https": 'http://103.39.10.170:51203',
-    "https": 'http://1717.196.233.21:8080'
-}
+proxy = {"https": get_working_proxy()}
+print("firstCricbuzz ",proxy)
 
 class Cricbuzz():
 	def __init__(self):
 		pass
 
 	def crawl_url(self,url):
-		try:
-			r = requests.get(url, proxies=proxies).json()
-			return r
-		except Exception:
-			raise
-
+		global proxy				
+		while True:
+			print("inCricbuzz ",proxy)
+			try:
+				r = requests.get(url, proxies=proxy).json()
+				return r
+			except Exception:
+				proxy["https"] = get_working_proxy()
+			
 	def players_mapping(self,mid):
 		url = "http://mapps.cricbuzz.com/cbzios/match/" + mid
 		match = self.crawl_url(url)
