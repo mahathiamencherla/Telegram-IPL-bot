@@ -15,7 +15,7 @@ for match in matches:
 		# print(json.dumps(match, indent = 4))	
 		break	
 
-# print(json.dumps(ipl, indent = 4))
+print(json.dumps(ipl, indent = 4))
 
 # this is for live score updates. (when score["overs"] is a whole number)
 # liveScore = c.livescore(match_id)
@@ -23,8 +23,8 @@ for match in matches:
 # print(json.dumps(liveScore, indent = 4))
 
 # # summary after every innings (when score["overs"] is 20 and inns_num is 1 and 2) 
-scoreCard = c.scorecard(match_id)
-print(json.dumps(scoreCard, indent = 4))
+# scoreCard = c.scorecard(match_id)
+# print(json.dumps(scoreCard, indent = 4))
 #print(json.dumps(scoreCard["scorecard"][0], indent = 4))	
 #print(json.dumps(scoreCard["scorecard"][1], indent = 4))	
 # print(scoreCard["scorecard"][1]["runs"])
