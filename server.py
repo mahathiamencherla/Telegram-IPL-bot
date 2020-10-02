@@ -227,8 +227,8 @@ def beginThread() :
 
 schedule.every().day.at("00:00").do(match_day_details)
 schedule.every().day.at("19:25").do(toss_squad_details)
-schedule.every().day.at("19:30").do(beginThread)
-# beginThread()
+# schedule.every().day.at("19:30").do(beginThread)
+beginThread()
 
 while True:
 	schedule.run_pending()
