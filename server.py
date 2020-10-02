@@ -40,7 +40,7 @@ def currUpdates():
 		try:
 			ipl = refresh_match_details("complete")
 		except UnboundLocalError:
-				ipl = refresh_match_details("mom")
+			ipl = refresh_match_details("mom")
 	scoreCard = c.scorecard(match_id)
 	team1 = ipl["team1"]["name"]
 	team2 = ipl["team2"]["name"]
@@ -128,17 +128,27 @@ def match_day_details(replyBackToUser = False):
 	return
 
 def toss_squad_details():
-	ipl = refresh_match_details("preview")
-	if (ipl):
-		team1 = ipl["team1"]["name"]
-		team2 = ipl["team2"]["name"]
-		team1Squad = "%0A".join(ipl["team1"]["squad"])
-		team2Squad = "%0A".join(ipl["team2"]["squad"])
-		toss = ipl["toss"].replace("elect","won the toss and elected")
-		send_to_all(toss)
-		send_to_all("Playing 11 for "+team1+": %0A"+team1Squad)
+	try:
+		ipl = refresh_match_details("toss")
+	except:
+		try:
+			ipl = refresh_match_details("inprogress")
+		except:
+			return toss_squad_details()
+	while True:	
+		if (ipl["team1"]["squad"] != []):
+			team1 = ipl["team1"]["name"]
+			team2 = ipl["team2"]["name"]
+			team1Squad = "%0A".join(ipl["team1"]["squad"])
+			team2Squad = "%0A".join(ipl["team2"]["squad"])
+			toss = ipl["toss"].replace("elect","won the toss and elected")
+			send_to_all(toss)
+			send_to_all("Playing 11 for "+team1+": %0A"+team1Squad)
+			send_to_all("Playing 11 for "+team2+": %0A"+team2Squad)	
 		send_to_all("Playing 11 for "+team2+": %0A"+team2Squad)	
-		send_to_all("Do you want detailed updates of the match? (Y/N)")
+			send_to_all("Playing 11 for "+team2+": %0A"+team2Squad)	
+			send_to_all("Do you want detailed updates of the match? (Y/N)")
+			break
 	return
 
 def get_match_details():
@@ -149,7 +159,11 @@ def get_match_details():
 		try:
 			ipl = refresh_match_details("complete")
 		except UnboundLocalError:
+			try:
 				ipl = refresh_match_details("mom")		
+			except UnboundLocalError:
+				time.sleep(60)
+				return get_match_details()
 	scoreCard = c.scorecard(match_id)
 	prev_over = 0.0
 	wickets = 0
