@@ -1,12 +1,12 @@
 # Telegram-IPL-bot
 
-A telegram bot that gives you instanteneous IPL match updates LIVE. 
-This bot uses the PyCricbuzz library in python which takes its data from the Cricbuzz api. 
+A telegram bot that gives you instanteneous IPL match updates LIVE.\ 
+This bot uses the PyCricbuzz library in python which takes its data from the Cricbuzz api.\ 
 Find this bot on telegram: 
 ```bash
 Search for "Dream11 IPL Updates" or username- @IPL_Stats_Bot
 ```
-**Note: Use branch WithoutProxy**
+**Note: Use branch WithoutProxy**\
 **The master branch has the IP Spoofing with round robin still in progress**
 
 ## Some key concepts covered:
@@ -16,9 +16,9 @@ Search for "Dream11 IPL Updates" or username- @IPL_Stats_Bot
 - Web Crawling
 
 ## Few things to note:
-1. Cricbuzz blocks all incoming requests from cloud servers (Heroku, AWS, GCP, or pythonanywhere)
-2. We achieved a workaround by implementing Domain IP Spoofing.
-3. You can get free proxy IPs from - 
+- Cricbuzz blocks all incoming requests from cloud servers (Heroku, AWS, GCP, or pythonanywhere)
+- We achieved a workaround by implementing Domain IP Spoofing.
+- You can get free proxy IPs from - 
 ```bash
 https://free-proxy-list.net/
 ```
