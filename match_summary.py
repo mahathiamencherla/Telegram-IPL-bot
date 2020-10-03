@@ -5,7 +5,7 @@ proxies = {
 	"http": 'http://185.175.76.21:80', 
     "https": 'http://58.11.59.192:80',
     "http": 'http://200.137.197.254:80',
-    "https": 'http://45.112.124.175:8080'
+    "https": 'http://37.221.197.207:8080'
 }
 
 def get_MOTM(match_id):
