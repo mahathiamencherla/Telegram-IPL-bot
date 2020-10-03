@@ -30,6 +30,7 @@ def refresh_match_details(state="inprogress"):
 		if(match["srs"] == "Indian Premier League 2020" and match["mchstate"]== state):
 			match_id = match["id"]
 			ipl = match
+			break
 	return ipl		
 
 def currUpdates():
