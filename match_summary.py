@@ -3,7 +3,7 @@ import json
 
 proxies = {	
     "https": 'http://58.11.59.192:80',    
-    "https": 'http://118.172.181.147:34388'
+    "https": 'http://103.113.197.20:8080'
 }
 
 def get_MOTM(match_id):
