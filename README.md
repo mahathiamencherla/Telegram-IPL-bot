@@ -20,6 +20,7 @@ Search for "Dream11 IPL Updates" or username- @IPL_Stats_Bot
 ```bash
 https://free-proxy-list.net/
 ```
+4. You can create your own bot using the BotFather on telegram (This gives you the telegram bot token)
 
 ## Cloning this repository
 ```bash
@@ -27,7 +28,7 @@ https://github.com/mahathiamencherla15/Telegram-IPL-bot.git
 ```
 
 ## Setup locally
-1. Comment the envirom lines in bot.py (this is used during deployment only)
+1. Comment the environ lines in bot.py (this is used during deployment only)
 
 2. Create a config.cfg file
 
