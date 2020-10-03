@@ -4,7 +4,7 @@ from proxy import *
 from bs4 import BeautifulSoup
 
 print("Cricbuzz.py start")
-proxy = {"https": get_working_proxy()}
+proxy = {"https": 'http://'+get_working_proxy()}
 print("firstCricbuzz ",proxy)
 
 class Cricbuzz():

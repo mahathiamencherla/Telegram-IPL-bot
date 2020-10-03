@@ -3,7 +3,7 @@ import json
 from proxy import *
 
 print("match_summmary.py start")
-proxy = {"https": get_working_proxy()}
+proxy = {"https": 'http://'+get_working_proxy()}
 print("FirstmatchSummary ",proxy)
 
 def get_MOTM(match_id):
