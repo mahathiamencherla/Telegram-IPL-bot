@@ -18,7 +18,6 @@ update_id = None
 match_id = None
 inn_final = 163
 start_time = '15:30'
-set_toss_schedule()
 
 print("server.py   4")
 matches = c.matches()
@@ -251,6 +250,7 @@ def set_toss_schedule():
 	schedule.every().day.at(toss_time).do(toss_squad_details)
 	return 
 
+set_toss_schedule()
 #no change to thread except- starting it at start_time
 schedule.every().day.at(start_time).do(beginThread)
 # beginThread()
