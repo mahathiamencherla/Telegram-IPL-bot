@@ -159,6 +159,7 @@ def toss_squad_details():
 	return
 
 def get_match_details():
+	print("Thread start")
 	global inn_final
 	global start_time
 	try:
@@ -176,6 +177,7 @@ def get_match_details():
 	prev_over = 0.0
 	wickets = 0
 	while not(float(scoreCard["scorecard"][0]["overs"]) == 20.0 and int(scoreCard["scorecard"][0]["inng_num"]) == 2) :
+		print("Thread Loop")
 		if wickets != int(scoreCard["scorecard"][0]["wickets"]):
 			fall_of_wickets(scoreCard)
 			wickets = int(scoreCard["scorecard"][0]["wickets"])
@@ -195,6 +197,7 @@ def get_match_details():
 				over_update += str((inn_final - int(scoreCard["scorecard"][0]["runs"]))) + " runs required from "	+ str(int(120-((math.floor(curr_balls)*6)+(curr_balls*10)%10))) +" balls."	
 			send_over_updates(over_update)			
 			if(float(scoreCard["scorecard"][0]["overs"]) == 20.0):
+				print("Innings Summary")
 				wickets = 0
 				innings_summary(scoreCard)
 		time.sleep(90)
