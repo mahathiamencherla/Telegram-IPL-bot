@@ -1,7 +1,7 @@
 #telegram Bot
 import json
-# from pycricbuzz import Cricbuzz
-from Criccbuzz import *
+from pycricbuzz import Cricbuzz
+# from Criccbuzz import *
 
 c = Cricbuzz()
 match_id = None
@@ -9,14 +9,16 @@ matches = c.matches()
 
 # Match stats (To be sent with "do you want match details?")
 for match in matches:
-	if(match["srs"] == "Indian Premier League 2020" ):
+	if(match["srs"] == "Indian Premier League 2020" and match["mchstate"] == "preview" ):
 		match_id = match["id"]
 		ipl = match	
 		# print(json.dumps(match, indent = 4))	
 		break	
 
-# print(json.dumps(ipl, indent = 4))
-
+print(json.dumps(ipl, indent = 4))
+start_time = ipl["start_time"]
+start_time = start_time[len(start_time)-8:len(start_time)-3]
+print(start_time)
 # this is for live score updates. (when score["overs"] is a whole number)
 # liveScore = c.livescore(match_id)
 
@@ -24,7 +26,7 @@ for match in matches:
 
 # # summary after every innings (when score["overs"] is 20 and inns_num is 1 and 2) 
 scoreCard = c.scorecard(match_id)
-print(json.dumps(scoreCard, indent = 4))
+# print(json.dumps(scoreCard, indent = 4))
 #print(json.dumps(scoreCard["scorecard"][0], indent = 4))	
 #print(json.dumps(scoreCard["scorecard"][1], indent = 4))	
 # print(scoreCard["scorecard"][1]["runs"])

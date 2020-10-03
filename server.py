@@ -17,7 +17,8 @@ tg_bot = telegram_chatbot("config.cfg")
 update_id = None
 match_id = None
 inn_final = 163
-yesFlag = False
+start_time = '15:30'
+set_toss_schedule()
 
 print("server.py   4")
 matches = c.matches()
@@ -34,6 +35,7 @@ def refresh_match_details(state="inprogress"):
 		if(match["srs"] == "Indian Premier League 2020" and match["mchstate"]== state):
 			match_id = match["id"]
 			ipl = match
+			break
 	return ipl		
 
 def currUpdates():
@@ -75,7 +77,6 @@ def removeUserId(userList, id):
 	return
 
 def make_reply(msg, id):
-	global yesFlag
 	if msg == None:
 		return
 	elif msg == "/stop" :
@@ -83,8 +84,7 @@ def make_reply(msg, id):
 		reply = "Succesfully unsubscribed!"
 	elif msg.lower() == "yes" or msg.lower() == "y" or msg == "/get_updates":
 		reply = "You are going to get match details!"
-		addUserId(overUpdateUserIds,id)
-		yesFlag = True		
+		addUserId(overUpdateUserIds,id)	
 	elif msg.lower() == "no" or msg.lower() == "n":	
 		reply = "Okay, no match details."
 	elif msg == "/points_table":	
@@ -120,15 +120,18 @@ def send_over_updates(msg):
 	return
 
 def match_day_details(replyBackToUser = False):
+	global start_time
 	ipl = refresh_match_details("preview")
 	if (ipl):
 		team1 = ipl["team1"]["name"]
 		team2 = ipl["team2"]["name"]
+		start_time = ipl["start_time"]
+		start_time = start_time[len(start_time)-8:len(start_time)-3]
 		matchDetails = "Upcoming match: %0A"+team1+" Vs. "+team2
 		if replyBackToUser:
-			return (matchDetails+"%0AStarts at 19:30(IST)")
+			return (matchDetails+"%0AStarts at "+start_time)
 		else:
-			send_to_all(matchDetails+"%0AStarts at 19:30(IST)")	
+			send_to_all(matchDetails+"%0AStarts at "+start_time)	
 	return
 
 def toss_squad_details():
@@ -147,6 +150,7 @@ def toss_squad_details():
 def get_match_details():
 	print(1)
 	global inn_final
+	global start_time
 	try:
 		print(2)
 		ipl = refresh_match_details() 
@@ -188,12 +192,17 @@ def get_match_details():
 	while True:
 		print(5)
 		match_summarry = get_match_summary(match_id)
+		ipl = refresh_match_details("preview")
+		start_time = ipl["start_time"]
+		start_time = start_time[len(start_time)-8:len(start_time)-3]
 		if match_summarry :
 			print(6)
 			scoreCard = c.scorecard(match_id)
 			end_of_match = "The match has ended\n"+scoreCard["scorecard"][0]["batteam"] + "'s final score: " + scoreCard["scorecard"][0]["runs"] + " - " + scoreCard["scorecard"][0]["wickets"] + "\n" + scoreCard["scorecard"][0]["overs"] + " overs\n"
 			end_of_match += match_summarry
 			send_to_all(end_of_match)
+			match_day_details()
+			set_toss_schedule()
 			print(end_of_match)
 			break
 	#MOTM	
@@ -232,18 +241,32 @@ def beginThread() :
 	return
 
 print("server.py   6")
-schedule.every().day.at("00:00").do(match_day_details)
-schedule.every().day.at("19:25").do(toss_squad_details)
-schedule.every().day.at("19:30").do(beginThread)
+
+def set_toss_schedule():
+	global start_time
+	toss_time_hrs = start_time[0:2]
+	toss_time_mins = int(start_time[3:5])-5
+	toss_time = toss_time_hrs + ":" + str(toss_time_mins)
+	# toss has to be sent 5 mins before upcoming match starts
+	schedule.every().day.at(toss_time).do(toss_squad_details)
+	return 
+
+#no change to thread except- starting it at start_time
+schedule.every().day.at(start_time).do(beginThread)
 # beginThread()
+
 print("server.py   7")
 
 while True:
 	schedule.run_pending()
 	time.sleep(1)
 	print ("...")
-	updates = tg_bot.get_updates(offset=update_id)
-	updates = updates["result"]
+	try:
+		updates = tg_bot.get_updates(offset=update_id)
+		updates = updates["result"]
+	except KeyError:
+		print("No messages")
+		pass	
 	if updates:
 		for item in updates:
 			update_id = item["update_id"]
