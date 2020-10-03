@@ -1,7 +1,9 @@
 # Telegram-IPL-bot
 
-A telegram bot that gives you instanteneous IPL match updates LIVE.\ 
-This bot uses the PyCricbuzz library in python which takes its data from the Cricbuzz api.\ 
+A telegram bot that gives you instanteneous IPL match updates LIVE. 
+
+This bot uses the PyCricbuzz library in python which takes its data from the Cricbuzz api. 
+
 Find this bot on telegram: 
 ```bash
 Search for "Dream11 IPL Updates" or username- @IPL_Stats_Bot
