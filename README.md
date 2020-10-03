@@ -6,6 +6,8 @@ Find this bot on telegram:
 ```bash
 Search for "Dream11 IPL Updates" or username- @IPL_Stats_Bot
 ```
+**Note: Use branch WithoutProxy**
+**The master branch has the IP Spoofing with round robin still in progress**
 
 ## Some key concepts covered:
 - Object Oriented Programming
