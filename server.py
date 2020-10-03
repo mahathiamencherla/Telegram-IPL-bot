@@ -230,7 +230,9 @@ def get_match_details():
 def innings_summary(scoreCard):  	
 	inn_sum = "Innings " + scoreCard["scorecard"][0]["inng_num"] + " summary:\n" + scoreCard["scorecard"][0]["runs"] + " - " + scoreCard["scorecard"][0]["wickets"] + "\n" + scoreCard["scorecard"][0]["overs"] + " overs"
 	send_to_all(inn_sum)
+	print("Gonna sleep")
 	time.sleep(900)
+	print("Awake")
 	return
 
 def fall_of_wickets(scoreCard):
