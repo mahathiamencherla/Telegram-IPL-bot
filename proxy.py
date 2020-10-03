@@ -34,7 +34,7 @@ def get_working_proxy():
         while proxies != []:
             print(count,len(proxies)," proxies in list",end="\n")
             try:
-                response = requests.get(url,proxies={"https": proxies[0]})
+                response = requests.get(url,proxies={"https": 'http://'+proxies[0]})
                 r=response.json()
                 # print(count,"Working proxy: ",proxy)                
                 return(proxies[0])
