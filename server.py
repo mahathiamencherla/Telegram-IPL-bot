@@ -245,7 +245,7 @@ def beginThread() :
 def set_toss_schedule():
 	global start_time
 	toss_time_hrs = start_time[0:2]
-	toss_time_mins = int(start_time[3:5])+5
+	toss_time_mins = int(start_time[3:5])+7
 	toss_time = toss_time_hrs + ":" + str(toss_time_mins)
 	# toss has to be sent 5 mins before upcoming match starts
 	schedule.every().day.at(toss_time).do(toss_squad_details)
@@ -259,7 +259,7 @@ schedule.every().day.at(start_time).do(beginThread)
 
 while True:
 	schedule.run_pending()
-	if not(thread1.is_alive()) and : 
+	if not(thread1.is_alive()): 
 		beginThread()
 	time.sleep(1)
 	print ("...")
