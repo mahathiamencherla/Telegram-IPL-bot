@@ -5,8 +5,7 @@ import traceback
 from bs4 import BeautifulSoup
 import os
 
-proxies = {
-	"http": 'http://185.175.76.21:80', 
+proxies = {	
     "https": 'http://58.11.59.192:80',
     "https": 'http://103.39.10.170:51203',
     "https": 'http://62.210.172.164:3128',	

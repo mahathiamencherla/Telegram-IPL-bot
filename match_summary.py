@@ -1,10 +1,8 @@
 import requests
 import json
 
-proxies = {
-	"http": 'http://185.175.76.21:80', 
-    "https": 'http://58.11.59.192:80',
-    "http": 'http://200.137.197.254:80',
+proxies = {	
+    "https": 'http://58.11.59.192:80',    
     "https": 'http://118.172.181.147:34388'
 }
 
