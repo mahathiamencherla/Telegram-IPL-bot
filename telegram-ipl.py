@@ -1,7 +1,7 @@
 #telegram Bot
 import json
-# from pycricbuzz import Cricbuzz
-from Criccbuzz import *
+from pycricbuzz import Cricbuzz
+# from Criccbuzz import *
 
 c = Cricbuzz()
 match_id = None

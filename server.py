@@ -72,6 +72,7 @@ def removeUserId(userList, id):
 	return
 
 def make_reply(msg, id):
+	global start_time
 	if msg == None:
 		return
 	elif msg == "/stop" :
@@ -94,6 +95,7 @@ def make_reply(msg, id):
 		reply = "Welcome to the IPL Updates bot!\n\nUse this as a user guide:\n1. /next_match to get upcoming match details.\n2. /points_table to get updates points table.\n3. The bot is going to send you summary updates of every match. If you are prompted with a \"Do you want more match details?\" question, you can answer yes to receive over by over and wicket updates.\n4. Type \"Give me updates\" to get the current livescore. \n5. /get_updates to get over by over updates.  \n6. /stop_match_details to stop getting over by over and wicket details.\nYou can always use /stop to stop the bot.\n\nThank you!\n\n\nFind the source code on: https://github.com/mahathiamencherla15/Telegram-IPL-bot/ "	
 	elif msg == "Give me updates":
 		curr_time = int(time.strftime('%H%M', time.localtime(t)))
+		start_time_hrs = start_
 		if curr_time > 1930 and curr_time <= 2359:
 			reply = currUpdates()
 		else:
@@ -132,12 +134,14 @@ def match_day_details(replyBackToUser = False):
 def toss_squad_details():
 	try:
 		ipl = refresh_match_details("toss")
+		print(ipl)
 	except:
 		try:
 			ipl = refresh_match_details("inprogress")
 		except:
 			return toss_squad_details()
 	while True:	
+		print("Inside toss squad")
 		if (ipl["team1"]["squad"] != []):
 			team1 = ipl["team1"]["name"]
 			team2 = ipl["team2"]["name"]
@@ -241,7 +245,7 @@ def beginThread() :
 def set_toss_schedule():
 	global start_time
 	toss_time_hrs = start_time[0:2]
-	toss_time_mins = int(start_time[3:5])-5
+	toss_time_mins = int(start_time[3:5])+5
 	toss_time = toss_time_hrs + ":" + str(toss_time_mins)
 	# toss has to be sent 5 mins before upcoming match starts
 	schedule.every().day.at(toss_time).do(toss_squad_details)
@@ -255,6 +259,8 @@ schedule.every().day.at(start_time).do(beginThread)
 
 while True:
 	schedule.run_pending()
+	if not(thread1.is_alive()) and : 
+		beginThread()
 	time.sleep(1)
 	print ("...")
 	try:
