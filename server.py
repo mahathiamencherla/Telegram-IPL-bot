@@ -187,10 +187,10 @@ def get_match_details():
 		if wickets != int(scoreCard["scorecard"][0]["wickets"]):
 			fall_of_wickets(scoreCard)
 			wickets = int(scoreCard["scorecard"][0]["wickets"])
+		if(inn_final == None):
+		 	inn_final = int(scoreCard["scorecard"][1]["runs"]) + 1
 		if(float(scoreCard["scorecard"][0]["overs"]) == 20.0 and int(scoreCard["scorecard"][0]["inng_num"]) == 1):
-			inn_final = int(scoreCard["scorecard"][0]["runs"]) + 1
-		# if(inn_final == None):
-		# 	inn_final = int(scoreCard["scorecard"][1]["runs"]) + 1
+			inn_final = int(scoreCard["scorecard"][0]["runs"]) + 1		
 		print("Check is at", float(scoreCard["scorecard"][0]["overs"]))
 		if float(scoreCard["scorecard"][0]["overs"]).is_integer() and prev_over != float(scoreCard["scorecard"][0]["overs"]):			
 			prev_over = float(scoreCard["scorecard"][0]["overs"])			
@@ -273,7 +273,7 @@ def set_toss_schedule():
 
 set_toss_schedule()
 #no change to thread except- starting it at start_time
-#schedule.every().day.at(start_time).do(beginThread)
+# schedule.every().day.at(start_time).do(beginThread)
 beginThread()
 
 print("server.py   7")
