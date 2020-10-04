@@ -7,7 +7,6 @@ import schedule
 import time
 import math
 from pointsTable import *
-from match_summary import *
 
 print("server.py   1")
 c = Cricbuzz()
@@ -212,13 +211,13 @@ def get_match_details():
 	while True:
 		print(5)
 		match_summarry = get_match_summary(match_id)
+		scoreCard = c.scorecard(match_id)
+		end_of_match = "The match has ended\n"+scoreCard["scorecard"][0]["batteam"] + "'s final score: " + scoreCard["scorecard"][0]["runs"] + " - " + scoreCard["scorecard"][0]["wickets"] + "\n" + scoreCard["scorecard"][0]["overs"] + " overs\n"
 		ipl = refresh_match_details("preview")
 		start_time = ipl["start_time"]
 		start_time = start_time[len(start_time)-8:len(start_time)-3]
 		if match_summarry :
-			print(6)
-			scoreCard = c.scorecard(match_id)
-			end_of_match = "The match has ended\n"+scoreCard["scorecard"][0]["batteam"] + "'s final score: " + scoreCard["scorecard"][0]["runs"] + " - " + scoreCard["scorecard"][0]["wickets"] + "\n" + scoreCard["scorecard"][0]["overs"] + " overs\n"
+			print(6)			
 			end_of_match += match_summarry
 			send_to_all(end_of_match)
 			match_day_details()
