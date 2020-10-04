@@ -16,7 +16,7 @@ tg_bot = telegram_chatbot("config.cfg")
 
 update_id = None
 match_id = None
-inn_final = 163
+inn_final = None
 start_time = '15:30'
 
 print("server.py   4")
@@ -134,16 +134,27 @@ def match_day_details(replyBackToUser = False):
 	return
 
 def toss_squad_details():
-	ipl = refresh_match_details("preview")
-	team1 = ipl["team1"]["name"]
-	team2 = ipl["team2"]["name"]
-	team1Squad = "%0A".join(ipl["team1"]["squad"])
-	team2Squad = "%0A".join(ipl["team2"]["squad"])
-	toss = ipl["toss"].replace("elect","won the toss and elected")
-	send_to_all(toss)
-	send_to_all("Playing 11 for "+team1+": %0A"+team1Squad)
-	send_to_all("Playing 11 for "+team2+": %0A"+team2Squad)	
-	send_to_all("Do you want detailed updates of the match? (Y/N)")
+	try:
+		ipl = refresh_match_details("toss")
+		print("getting toss details")
+	except:
+		try:
+			ipl = refresh_match_details("inprogress")
+		except:
+			return toss_squad_details()
+	while True:	
+		print("Inside toss squad")
+		if (ipl["team1"]["squad"] != []):
+			team1 = ipl["team1"]["name"]
+			team2 = ipl["team2"]["name"]
+			team1Squad = "%0A".join(ipl["team1"]["squad"])
+			team2Squad = "%0A".join(ipl["team2"]["squad"])
+			toss = ipl["toss"].replace("elect","won the toss and elected")
+			send_to_all(toss)
+			send_to_all("Playing 11 for "+team1+": %0A"+team1Squad)
+			send_to_all("Playing 11 for "+team2+": %0A"+team2Squad)				
+			send_to_all("Do you want detailed updates of the match? (Y/N)")
+			break
 	return
 
 def get_match_details():
@@ -170,7 +181,7 @@ def get_match_details():
 		if(float(scoreCard["scorecard"][0]["overs"]) == 20.0 and int(scoreCard["scorecard"][0]["inng_num"]) == 1):
 			inn_final = int(scoreCard["scorecard"][0]["runs"]) + 1
 		if(inn_final == None):
-			inn_final = scoreCard["scorecard"][1]["runs"]
+			inn_final = int(scoreCard["scorecard"][1]["runs"]) + 1
 		if float(scoreCard["scorecard"][0]["overs"]).is_integer() and prev_over != float(scoreCard["scorecard"][0]["overs"]):			
 			prev_over = float(scoreCard["scorecard"][0]["overs"])			
 			over_update = scoreCard["scorecard"][0]["batteam"] + " are batting!\n" + scoreCard["scorecard"][0]["runs"] + " - " + scoreCard["scorecard"][0]["wickets"] + "\n" + scoreCard["scorecard"][0]["overs"] + " overs\n"
