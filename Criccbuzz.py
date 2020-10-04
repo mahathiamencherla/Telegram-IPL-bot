@@ -4,7 +4,7 @@ from proxy import *
 from bs4 import BeautifulSoup
 
 print("Cricbuzz.py start")
-proxy = {"https": 'http://'+get_working_proxy()}
+proxy = {"http": 'http://'+get_working_proxy()}
 print("firstCricbuzz ",proxy)
 
 class Cricbuzz():
@@ -20,7 +20,7 @@ class Cricbuzz():
 				return r
 			except Exception as e:
 				print(e)
-				proxy["https"] = get_working_proxy()
+				proxy["http"] = get_working_proxy()
 			
 	def players_mapping(self,mid):
 		url = "http://mapps.cricbuzz.com/cbzios/match/" + mid

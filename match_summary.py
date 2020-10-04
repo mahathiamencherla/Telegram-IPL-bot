@@ -3,7 +3,7 @@ import json
 from proxy import *
 
 print("match_summmary.py start")
-proxy = {"https": 'http://'+get_working_proxy()}
+proxy = {"http": 'http://'+get_working_proxy()}
 print("FirstmatchSummary ",proxy)
 
 def get_MOTM(match_id):
@@ -18,7 +18,7 @@ def get_MOTM(match_id):
 			r = requests.get(url, proxies=proxy).json()
 			break
 		except Exception:
-			proxy["https"] = get_working_proxy()
+			proxy["http"] = get_working_proxy()
 	try :
 		manOfTheMatch = r["header"]["momNames"].pop()
 	except:
