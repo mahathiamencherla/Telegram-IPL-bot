@@ -272,8 +272,8 @@ def set_toss_schedule():
 
 set_toss_schedule()
 #no change to thread except- starting it at start_time
-schedule.every().day.at(start_time).do(beginThread)
-# beginThread()
+#schedule.every().day.at(start_time).do(beginThread)
+beginThread()
 
 print("server.py   7")
 
