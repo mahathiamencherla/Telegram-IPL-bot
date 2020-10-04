@@ -180,8 +180,8 @@ def get_match_details():
 			wickets = int(scoreCard["scorecard"][0]["wickets"])
 		if(float(scoreCard["scorecard"][0]["overs"]) == 20.0 and int(scoreCard["scorecard"][0]["inng_num"]) == 1):
 			inn_final = int(scoreCard["scorecard"][0]["runs"]) + 1
-		if(inn_final == None):
-			inn_final = int(scoreCard["scorecard"][1]["runs"]) + 1
+		# if(inn_final == None):
+		# 	inn_final = int(scoreCard["scorecard"][1]["runs"]) + 1
 		if float(scoreCard["scorecard"][0]["overs"]).is_integer() and prev_over != float(scoreCard["scorecard"][0]["overs"]):			
 			prev_over = float(scoreCard["scorecard"][0]["overs"])			
 			over_update = scoreCard["scorecard"][0]["batteam"] + " are batting!\n" + scoreCard["scorecard"][0]["runs"] + " - " + scoreCard["scorecard"][0]["wickets"] + "\n" + scoreCard["scorecard"][0]["overs"] + " overs\n"
