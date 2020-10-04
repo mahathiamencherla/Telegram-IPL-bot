@@ -8,7 +8,7 @@ import os
 proxies = {	
     "https": 'http://58.11.59.192:80',
     "https": 'http://62.171.153.79:8888',
-    "https": 'http://186.159.3.41:30334',	
+    "http": 'http://186.159.3.41:30334',	
 }
 
 class Cricbuzz():
