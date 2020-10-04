@@ -182,12 +182,12 @@ def get_match_details():
 	scoreCard = c.scorecard(match_id)
 	prev_over = 0.0
 	wickets = 0
+	if(inn_final == None and int(scoreCard["scorecard"][0]["inng_num"]) == 2):
+		 	inn_final = int(scoreCard["scorecard"][1]["runs"]) + 1
 	while not(float(scoreCard["scorecard"][0]["overs"]) == 20.0 and int(scoreCard["scorecard"][0]["inng_num"]) == 2) :
 		if wickets != int(scoreCard["scorecard"][0]["wickets"]):
 			fall_of_wickets(scoreCard)
-			wickets = int(scoreCard["scorecard"][0]["wickets"])
-		if(inn_final == None):
-		 	inn_final = int(scoreCard["scorecard"][1]["runs"]) + 1
+			wickets = int(scoreCard["scorecard"][0]["wickets"])		
 		if(float(scoreCard["scorecard"][0]["overs"]) == 20.0 and int(scoreCard["scorecard"][0]["inng_num"]) == 1):
 			inn_final = int(scoreCard["scorecard"][0]["runs"]) + 1		
 		print("Check is at", float(scoreCard["scorecard"][0]["overs"]))
