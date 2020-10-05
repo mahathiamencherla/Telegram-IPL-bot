@@ -197,7 +197,7 @@ def get_match_details():
 	if(inn_final == 0 and int(scoreCard["scorecard"][0]["inng_num"]) == 2):
 		 	inn_final = int(scoreCard["scorecard"][1]["runs"]) + 1
 	while not(float(scoreCard["scorecard"][0]["overs"]) == 20.0 and int(scoreCard["scorecard"][0]["inng_num"]) == 2):
-		if (scoreCard["scorecard"][0]["runs"] >= inn_final):
+		if (int(scoreCard["scorecard"][0]["runs"]) >= inn_final):
 			break
 		if (scoreCard["scorecard"][0]["wickets"] == 10 and int(scoreCard["scorecard"][0]["inng_num"]) == 2):
 			break
