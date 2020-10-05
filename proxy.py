@@ -12,7 +12,7 @@ def get_proxies():
     rows = my_table.findChildren(['tr'])    
     for row in rows:
         count += 1
-        if count == 12:
+        if count == 22:
             break
         cell = row.findChildren('td')
         if len(cell) > 0:          

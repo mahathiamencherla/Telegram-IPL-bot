@@ -1,5 +1,5 @@
 from bot import telegram_chatbot
-#from pycricbuzz import Cricbuzz
+# from pycricbuzz import Cricbuzz
 from Criccbuzz import *
 import json
 import threading
@@ -15,8 +15,8 @@ tg_bot = telegram_chatbot("config.cfg")
 
 update_id = None
 match_id = None
-inn_final = 0
-start_time = '15:30'
+inn_final = -1
+start_time = '19:30'
 
 print("server.py   4")
 matches = c.matches()
@@ -113,10 +113,10 @@ def make_reply(msg, id):
 		start_time_num = start_time.replace(":",'')
 		start_time_num = int(start_time_num)
 		if curr_time > start_time_num and curr_time <= 2359:
-			print(curr_time, start_time_num)
+			print("going to currUpdates() ", curr_time, start_time_num)
 			reply = currUpdates()
 		else:
-			print(curr_time, start_time_num)
+			print("going to match_day_details() ", curr_time, start_time_num)
 			reply = match_day_details(True)
 	else:
 		reply = "Welcome to the IPL Updates bot!\n\nUse this as a user guide:\n1. /next_match to get upcoming match details.\n2. /points_table to get updates points table.\n3. The bot is going to send you summary updates of every match. If you are prompted with a \"Do you want more match details?\" question, you can answer yes to receive over by over and wicket updates.\n4. Type \"Give me updates\" to get the current livescore. \n5. /get_updates to get over by over updates.  \n6. /stop_match_details to stop getting over by over and wicket details.\nYou can always use /stop to stop the bot.\n\nThank you!\n\n\nFind the source code on: https://github.com/mahathiamencherla15/Telegram-IPL-bot/ "	
@@ -136,7 +136,12 @@ def send_over_updates(msg):
 
 def match_day_details(replyBackToUser = False):
 	global start_time
-	ipl = refresh_match_details("preview")
+	try:
+		ipl = refresh_match_details("preview")
+	except:
+		print("No match preview available")
+		if replyBackToUser:
+			return ("No match preview available")		
 	if (ipl):
 		team1 = ipl["team1"]["name"]
 		team2 = ipl["team2"]["name"]
@@ -194,14 +199,19 @@ def get_match_details():
 	scoreCard = c.scorecard(match_id)
 	prev_over = 0.0
 	wickets = 0
-	if(inn_final == 0 and int(scoreCard["scorecard"][0]["inng_num"]) == 2):
+	if(inn_final == -1 and int(scoreCard["scorecard"][0]["inng_num"]) == 2):
 		 	inn_final = int(scoreCard["scorecard"][1]["runs"]) + 1
+	print("out")
 	while not(float(scoreCard["scorecard"][0]["overs"]) == 20.0 and int(scoreCard["scorecard"][0]["inng_num"]) == 2):
-		if (int(scoreCard["scorecard"][0]["runs"]) >= inn_final):
+		print("in")
+		if (int(scoreCard["scorecard"][0]["runs"]) >= inn_final and int(scoreCard["scorecard"][0]["inng_num"]) == 2):
+			print("exceeded target")
 			break
 		if (scoreCard["scorecard"][0]["wickets"] == 10 and int(scoreCard["scorecard"][0]["inng_num"]) == 2):
+			print("all out inn:2")
 			break
 		if (scoreCard["scorecard"][0]["wickets"] == 10 and int(scoreCard["scorecard"][0]["inng_num"]) == 1):
+			print("all out inn:1")
 			wickets = 0
 			innings_summary(scoreCard)
 			continue
