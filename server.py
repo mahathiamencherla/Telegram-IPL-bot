@@ -53,7 +53,10 @@ def currUpdates():
 		try:
 			ipl = refresh_match_details("complete")
 		except UnboundLocalError:
+			try:
 				ipl = refresh_match_details("mom")
+			except:
+				return currUpdates()
 	scoreCard = c.scorecard(match_id)
 	team1 = ipl["team1"]["name"]
 	team2 = ipl["team2"]["name"]
