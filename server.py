@@ -15,7 +15,7 @@ tg_bot = telegram_chatbot("config.cfg")
 
 update_id = None
 match_id = None
-inn_final = None
+inn_final = 0
 start_time = '15:30'
 
 print("server.py   4")
@@ -191,14 +191,23 @@ def get_match_details():
 	scoreCard = c.scorecard(match_id)
 	prev_over = 0.0
 	wickets = 0
-	if(inn_final == None and int(scoreCard["scorecard"][0]["inng_num"]) == 2):
+	if(inn_final == 0 and int(scoreCard["scorecard"][0]["inng_num"]) == 2):
 		 	inn_final = int(scoreCard["scorecard"][1]["runs"]) + 1
-	while not(float(scoreCard["scorecard"][0]["overs"]) == 20.0 and int(scoreCard["scorecard"][0]["inng_num"]) == 2) :
+	while not(float(scoreCard["scorecard"][0]["overs"]) == 20.0 and int(scoreCard["scorecard"][0]["inng_num"]) == 2):
+		if (scoreCard["scorecard"][0]["runs"] >= inn_final):
+			break
+		if (scoreCard["scorecard"][0]["wickets"] == 10 and int(scoreCard["scorecard"][0]["inng_num"]) == 2):
+			break
+		if (scoreCard["scorecard"][0]["wickets"] == 10 and int(scoreCard["scorecard"][0]["inng_num"]) == 1):
+			wickets = 0
+			innings_summary(scoreCard)
+			continue
+			
 		if wickets != int(scoreCard["scorecard"][0]["wickets"]):
 			fall_of_wickets(scoreCard)
 			wickets = int(scoreCard["scorecard"][0]["wickets"])		
-		if(float(scoreCard["scorecard"][0]["overs"]) == 20.0 and int(scoreCard["scorecard"][0]["inng_num"]) == 1):
-			inn_final = int(scoreCard["scorecard"][0]["runs"]) + 1		
+		# if(float(scoreCard["scorecard"][0]["overs"]) == 20.0 and int(scoreCard["scorecard"][0]["inng_num"]) == 1):
+		# 	inn_final = int(scoreCard["scorecard"][0]["runs"]) + 1		
 		print("Check is at", float(scoreCard["scorecard"][0]["overs"]))
 		if float(scoreCard["scorecard"][0]["overs"]).is_integer() and prev_over != float(scoreCard["scorecard"][0]["overs"]):			
 			prev_over = float(scoreCard["scorecard"][0]["overs"])			
@@ -248,6 +257,8 @@ def get_match_details():
 
 def innings_summary(scoreCard):  	
 	global start_time
+	global inn_final
+	inn_final = int(scoreCard["scorecard"][0]["runs"]) + 1	
 	inn_sum = "Innings " + scoreCard["scorecard"][0]["inng_num"] + " summary:\n" + scoreCard["scorecard"][0]["runs"] + " - " + scoreCard["scorecard"][0]["wickets"] + "\n" + scoreCard["scorecard"][0]["overs"] + " overs"
 	send_to_all(inn_sum)
 	ipl = refresh_match_details("preview")
@@ -270,10 +281,17 @@ def fall_of_wickets(scoreCard):
 def beginThread() :	
 	print("Thread Begins")
 	thread1 = threading.Thread(target = get_match_details)
-	thread1.start()
+	thread2 = threading.Thread(target = get_match_details)
+	if(thread1.is_alive()):
+		print("Thread 1 is alive")
+		thread2.start()
+		print("Thread 2 is starting")
+	else:
+		thread1.start()
 	return
 
 print("server.py   6")
+
 
 def set_toss_schedule():
 	global start_time

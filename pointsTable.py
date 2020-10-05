@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 
-print("pintsTable.py start")
+print("pointsTable.py start")
 def getPointsTable() :
 	url = "https://www.iplt20.com/points-table/2020"
 
@@ -34,10 +34,10 @@ def getPointsTable() :
 	return([teamStanding,played,won,lost,tied,netRR])
 
 def pointsTableParser(table):	
-	beautyTable = "Teams    Played    Won    Lost    Tied      Net RR\n"
+	beautyTable = "Teams    Played    Won    Lost    Tied      Net RR      Points\n"
 	table[0] = [i.ljust(10,' ') for i in table[0]]	
 	for i in range(len(table[0])):		
-		beautyTable += table[0][i] + table[1][i]+"            "+table[2][i]+"            "+table[3][i]+"          "+table[4][i]+"        "+table[5][i]
+		beautyTable += table[0][i] + table[1][i]+"              "+table[2][i]+"            "+table[3][i]+"          "+table[4][i]+"        "+table[5][i] + str(int(table[2][i])*2 + int(table[4][i])*1)
 		beautyTable += "\n"	
 	return beautyTable
 
