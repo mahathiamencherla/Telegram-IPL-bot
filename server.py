@@ -36,6 +36,15 @@ def refresh_match_details(state="inprogress"):
 			break
 	return ipl		
 
+try:
+	ipl = refresh_match_details("preview")
+	start_time = ipl["start_time"]
+	start_time = start_time[len(start_time)-8:len(start_time)-3]
+	print("try for start", start_time)
+except:
+	print("did not set start_time")
+	pass
+
 def currUpdates():
 	global inn_final
 	try:
@@ -205,7 +214,7 @@ def get_match_details():
 			if(float(scoreCard["scorecard"][0]["overs"]) == 20.0):
 				wickets = 0
 				innings_summary(scoreCard)
-		time.sleep(60)
+		time.sleep(45)
 		scoreCard = c.scorecard(match_id)	
 	print("not")
 	while True:
@@ -238,9 +247,14 @@ def get_match_details():
 	return 	
 
 def innings_summary(scoreCard):  	
+	global start_time
 	inn_sum = "Innings " + scoreCard["scorecard"][0]["inng_num"] + " summary:\n" + scoreCard["scorecard"][0]["runs"] + " - " + scoreCard["scorecard"][0]["wickets"] + "\n" + scoreCard["scorecard"][0]["overs"] + " overs"
 	send_to_all(inn_sum)
-	time.sleep(900)
+	ipl = refresh_match_details("preview")
+	start_time = ipl["start_time"]
+	start_time = start_time[len(start_time)-8:len(start_time)-3]
+	set_toss_schedule()
+	time.sleep(600)
 	return
 
 def fall_of_wickets(scoreCard):
@@ -267,13 +281,14 @@ def set_toss_schedule():
 	toss_time_mins = int(start_time[3:5])-5
 	toss_time = toss_time_hrs + ":" + str(toss_time_mins)
 	# toss has to be sent 5 mins before upcoming match starts
+	print("toss time", toss_time)
 	schedule.every().day.at(toss_time).do(toss_squad_details)
 	return 
 
 set_toss_schedule()
 #no change to thread except- starting it at start_time
-# schedule.every().day.at(start_time).do(beginThread)
-beginThread()
+schedule.every().day.at(start_time).do(beginThread)
+# beginThread()
 
 print("server.py   7")
 
