@@ -40,7 +40,7 @@ try:
 	ipl = refresh_match_details("preview")
 	start_time = ipl["start_time"]
 	start_time = start_time[len(start_time)-8:len(start_time)-3]
-	print("try for start", start_time)
+	print("start time has been set to ", start_time)
 except:
 	print("did not set start_time")
 	pass
@@ -56,6 +56,7 @@ def currUpdates():
 			try:
 				ipl = refresh_match_details("mom")
 			except:
+				print("currUpdates didnt find any match inprogress/complete/mom")
 				return currUpdates()
 	scoreCard = c.scorecard(match_id)
 	team1 = ipl["team1"]["name"]
@@ -72,9 +73,6 @@ def currUpdates():
 		over_update += str((inn_final - int(scoreCard["scorecard"][0]["runs"]))) + " runs required from "	+ str(int(120-((math.floor(curr_balls)*6)+(curr_balls*10)%10))) +" balls."	
 
 	return over_update
-
-
-# scoreCard = c.scorecard(match_id)
 
 def addUserId(userList, id):
 	if id not in userList:
@@ -194,6 +192,7 @@ def get_match_details():
 			try:
 				ipl = refresh_match_details("mom")		
 			except UnboundLocalError:
+				print("In get_match_details didnt find any match inprogress/complete/mom\tgonna sleep for 60")
 				time.sleep(60)
 				return get_match_details()
 	scoreCard = c.scorecard(match_id)
@@ -218,9 +217,7 @@ def get_match_details():
 			
 		if wickets != int(scoreCard["scorecard"][0]["wickets"]):
 			fall_of_wickets(scoreCard)
-			wickets = int(scoreCard["scorecard"][0]["wickets"])		
-		# if(float(scoreCard["scorecard"][0]["overs"]) == 20.0 and int(scoreCard["scorecard"][0]["inng_num"]) == 1):
-		# 	inn_final = int(scoreCard["scorecard"][0]["runs"]) + 1		
+			wickets = int(scoreCard["scorecard"][0]["wickets"])				
 		print("Check is at", float(scoreCard["scorecard"][0]["overs"]))
 		if float(scoreCard["scorecard"][0]["overs"]).is_integer() and prev_over != float(scoreCard["scorecard"][0]["overs"]):			
 			prev_over = float(scoreCard["scorecard"][0]["overs"])			
@@ -251,8 +248,9 @@ def get_match_details():
 			print(6)			
 			end_of_match += match_summarry
 			send_to_all(end_of_match)
-			match_day_details()
-			set_toss_schedule()
+			match_day_details() #do you wann add this and
+			set_toss_schedule() #this above match_summarry = get_match_summary(match_id)
+			                    #so that it runs even if getting match summary is delayed
 			print(end_of_match)
 			break
 	#MOTM	
@@ -319,7 +317,7 @@ def set_toss_schedule():
 set_toss_schedule()
 #no change to thread except- starting it at start_time
 schedule.every().day.at(start_time).do(beginThread)
-beginThread()
+# beginThread()
 
 print("server.py   7")
 
@@ -332,7 +330,7 @@ while True:
 		updates = updates["result"]
 	except KeyError:
 		print("No messages")
-		pass	
+		continue #TypeError: string indices must be integers  ; replaced the pass in this line with continue
 	if updates:
 		for item in updates:
 			update_id = item["update_id"]

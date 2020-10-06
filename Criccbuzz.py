@@ -17,6 +17,9 @@ def get_MOTM(match_id):
 			break
 		except Exception as e:
 			print(e)
+			print("In MOTM gonna sleep for 60s")
+			time.sleep(60)
+			print("In MOTM woke")
 			proxy["http"] = get_working_proxy()
 	try :
 		manOfTheMatch = r["header"]["momNames"].pop()
@@ -30,7 +33,7 @@ def get_match_summary(match_id):
 	url = "https://mapps.cricbuzz.com/cbzios/match/{}/".format(match_id)
 	state = None
 	while not(state == "complete" or state == "mom"):		
-		print("in matchSUM whileloop")		
+		print("in matchSUM whileloop; state is ", state)		
 		while True:
 			print("inCricbuzz ",proxy)
 			try:
@@ -38,6 +41,9 @@ def get_match_summary(match_id):
 				break
 			except Exception as e:
 				print(e)
+				print("In match summary gonna sleep for 60s")
+				time.sleep(60)
+				print("In match summary woke")
 				proxy["http"] = get_working_proxy()
 		state = r["header"]["state"]	
 	status = r["header"]["status"]
