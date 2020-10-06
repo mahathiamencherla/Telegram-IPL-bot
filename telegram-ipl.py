@@ -9,7 +9,7 @@ matches = c.matches()
 
 # Match stats (To be sent with "do you want match details?")
 for match in matches:
-	if(match["srs"] == "Indian Premier League 2020" and match["mchstate"] == "inprogress" ):
+	if(match["srs"] == "Indian Premier League 2020" and match["mchstate"] == "complete" ):
 		match_id = match["id"]
 		ipl = match	
 		# print(json.dumps(match, indent = 4))	

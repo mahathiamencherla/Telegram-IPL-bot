@@ -269,10 +269,10 @@ def get_match_details():
 			if (int(scoreCard["scorecard"][0]["runs"]) >= inn_final and int(scoreCard["scorecard"][0]["inng_num"]) == 2):
 				print("exceeded target")
 				break
-			if (scoreCard["scorecard"][0]["wickets"] == 10 and int(scoreCard["scorecard"][0]["inng_num"]) == 2):
+			if (int(scoreCard["scorecard"][0]["wickets"]) == 10 and int(scoreCard["scorecard"][0]["inng_num"]) == 2):
 				print("all out inn:2")
 				break
-			if (scoreCard["scorecard"][0]["wickets"] == 10 and int(scoreCard["scorecard"][0]["inng_num"]) == 1):
+			if (int(scoreCard["scorecard"][0]["wickets"]) == 10 and int(scoreCard["scorecard"][0]["inng_num"]) == 1):
 				print("all out inn:1")
 				wickets = 0
 				innings_summary(scoreCard)
