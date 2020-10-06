@@ -37,8 +37,8 @@ def pointsTableParser(table):
 	beautyTable = "Teams     P    W    L    T      NRR      Pts\n"
 	table[0] = [i.ljust(10,' ') for i in table[0]]	
 	for i in range(len(table[0])):		
-		beautyTable += table[0][i] + table[1][i]+"    "+table[2][i]+"    "+table[3][i]+"    "+table[4][i]+"    "+table[5][i] + "      " +str(int(table[2][i])*2 + int(table[4][i])*1)
+		beautyTable += table[0][i] +"  "+ table[1][i]+"    "+table[2][i]+"    "+table[3][i]+"    "+table[4][i]+"    "+table[5][i] + "      " +str(int(table[2][i])*2 + int(table[4][i])*1)
 		beautyTable += "\n"	
 	return beautyTable
 
-print(pointsTableParser(getPointsTable() ))
+
