@@ -33,17 +33,17 @@ def get_match_summary(match_id):
 	url = "https://mapps.cricbuzz.com/cbzios/match/{}/".format(match_id)
 	state = None
 	while not(state == "complete" or state == "mom"):		
-		print("in matchSUM whileloop; state is ", state)		
+		print("in matchSUM whileloop; state is ", state)
+		print("In match summary gonna sleep for 60s")
+		time.sleep(60)
+		print("In match summary woke")		
 		while True:
 			print("inCricbuzz ",proxy)
 			try:
 				r = requests.get(url, proxies=proxy).json()
 				break
 			except Exception as e:
-				print(e)
-				print("In match summary gonna sleep for 60s")
-				time.sleep(60)
-				print("In match summary woke")
+				print(e)				
 				proxy["http"] = get_working_proxy()
 		state = r["header"]["state"]	
 	status = r["header"]["status"]
