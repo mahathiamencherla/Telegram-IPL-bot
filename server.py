@@ -29,11 +29,12 @@ t = time.time()
 
 def refresh_match_details(state="inprogress"):
 	global match_id
+	ipl = None
 	for match in matches:
 		if(match["srs"] == "Indian Premier League 2020" and match["mchstate"]== state):
 			match_id = match["id"]
 			ipl = match
-			break
+			break		
 	return ipl		
 
 try:
@@ -47,17 +48,38 @@ except:
 
 def currUpdates():
 	global inn_final
-	try:
+	while True:
 		ipl = refresh_match_details() 
-	except UnboundLocalError:
-		try:
-			ipl = refresh_match_details("complete")
-		except UnboundLocalError:
-			try:
-				ipl = refresh_match_details("mom")
-			except:
-				print("currUpdates didnt find any match inprogress/complete/mom")
-				return currUpdates()
+		
+		if ipl == None: #no match found in progress
+			print("currUpdates(): no match inprogress")
+			ipl = refresh_match_details("complete") 
+		else:
+			break #found a match in progress
+		
+		if ipl == None: #no match found in complete
+			print("currUpdates(): no match complete")
+			ipl = refresh_match_details("mom") 
+		else:
+			break #found a match compete
+		
+		if ipl == None: #no match found in mom
+			print("currUpdates(): no match in mom")						
+		else:
+			break #found a match mom
+		time.sleep(60) #wait 60 seconds before searching again
+
+	# try:
+	# 	ipl = refresh_match_details() 
+	# except UnboundLocalError:
+	# 	try:
+	# 		ipl = refresh_match_details("complete")
+	# 	except UnboundLocalError:
+	# 		try:
+	# 			ipl = refresh_match_details("mom")
+	# 		except:
+	# 			print("currUpdates didnt find any match inprogress/complete/mom")
+	# 			return currUpdates()
 	scoreCard = c.scorecard(match_id)
 	team1 = ipl["team1"]["name"]
 	team2 = ipl["team2"]["name"]
@@ -133,13 +155,19 @@ def send_over_updates(msg):
 	return
 
 def match_day_details(replyBackToUser = False):
-	global start_time
-	try:
-		ipl = refresh_match_details("preview")
-	except:
+	global start_time			
+	ipl = refresh_match_details("preview") 		
+	if ipl == None: #no match found in progress
 		print("No match preview available")
+	else:
 		if replyBackToUser:
-			return ("No match preview available")		
+	 		return ("No match preview available")		
+		
+	# try:
+	# 	ipl = refresh_match_details("preview")
+	# except:
+	# 	print("No match preview available")
+	# 	
 	if (ipl):
 		team1 = ipl["team1"]["name"]
 		team2 = ipl["team2"]["name"]
@@ -153,14 +181,26 @@ def match_day_details(replyBackToUser = False):
 	return
 
 def toss_squad_details():
-	try:
-		ipl = refresh_match_details("toss")
-		print("getting toss details")
-	except:
-		try:
+	while True:
+		ipl = refresh_match_details("toss") 		
+		if ipl == None: #no match found in toss
+			print("toss_squad_details(): no match in toss")			
 			ipl = refresh_match_details("inprogress")
-		except:
-			return toss_squad_details()
+		else:
+			break #found a match in toss
+		if ipl == None:
+			print("toss_squad_details(): no match in progress")	
+		else:			
+			break #found a match in progress
+		time.sleep(60) #wait 60 seconds before checking again
+	# try:
+	# 	ipl = refresh_match_details("toss")
+	# 	print("getting toss details")
+	# except:
+	# 	try:
+	# 		ipl = refresh_match_details("inprogress")
+	# 	except:
+	# 		return toss_squad_details()
 	while True:	
 		print("Inside toss squad")
 		if (ipl["team1"]["squad"] != []):
@@ -180,21 +220,43 @@ def get_match_details():
 	print(1)
 	global inn_final
 	global start_time
-	try:
-		print(2)
+	while True:
 		ipl = refresh_match_details() 
-	except UnboundLocalError:
-		print(3)
-		try:
-			ipl = refresh_match_details("complete")
-		except UnboundLocalError:
-			print(4)
-			try:
-				ipl = refresh_match_details("mom")		
-			except UnboundLocalError:
-				print("In get_match_details didnt find any match inprogress/complete/mom\tgonna sleep for 60")
-				time.sleep(60)
-				return get_match_details()
+		
+		if ipl == None: #no match found in progress
+			print("currUpdates(): no match inprogress")
+			ipl = refresh_match_details("complete") 
+		else:
+			break #found a match in progress
+		
+		if ipl == None: #no match found in complete
+			print("currUpdates(): no match complete")
+			ipl = refresh_match_details("mom") 
+		else:
+			break #found a match compete
+		
+		if ipl == None: #no match found in mom
+			print("currUpdates(): no match in mom")						
+		else:
+			break #found a match mom
+		time.sleep(60) #wait 60 seconds before searching again
+
+	# try:
+	# 	print(2)
+	# 	ipl = refresh_match_details() 
+	# except UnboundLocalError:
+	# 	print(3)
+	# 	try:
+	# 		ipl = refresh_match_details("complete")
+	# 	except UnboundLocalError:
+	# 		print(4)
+	# 		try:
+	# 			ipl = refresh_match_details("mom")		
+	# 		except UnboundLocalError:
+	# 			print(ipl)
+	# 			print("In get_match_details didnt find any match inprogress/complete/mom\tgonna sleep for 60")
+	# 			time.sleep(60)
+	# 			return get_match_details()
 	scoreCard = c.scorecard(match_id)
 	prev_over = 0.0
 	wickets = 0
@@ -317,7 +379,7 @@ def set_toss_schedule():
 set_toss_schedule()
 #no change to thread except- starting it at start_time
 schedule.every().day.at(start_time).do(beginThread)
-# beginThread()
+beginThread()
 
 print("server.py   7")
 
