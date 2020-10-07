@@ -291,6 +291,16 @@ def get_match_details():
 		send_to_all(end_of_match)
 		print("Got match summary")
 
+		ipl = refresh_match_details("preview")
+		while ipl ==  None: #check once
+			print("IN innings summary....couldnt find a match in preview")
+			print("refreshing matches")
+			matches = c.matches()
+			ipl = refresh_match_details("preview")
+		start_time = ipl["start_time"]
+		start_time = start_time[len(start_time)-8:len(start_time)-3]
+		set_toss_schedule()
+
 		match_day_details()  #the rest is done in innings no? we could probably send upcoming match during innings break also
 		
 		print(end_of_match)
@@ -310,7 +320,7 @@ def innings_summary(scoreCard):
 	inn_sum = "Innings " + scoreCard["scorecard"][0]["inng_num"] + " summary:\n" + scoreCard["scorecard"][0]["runs"] + " - " + scoreCard["scorecard"][0]["wickets"] + "\n" + scoreCard["scorecard"][0]["overs"] + " overs"
 	send_to_all(inn_sum)
 	ipl = refresh_match_details("preview")
-	while ipl ==  None:
+	if ipl ==  None: #check once
 		print("IN innings summary....couldnt find a match in preview")
 		print("refreshing matches")
 		matches = c.matches()
