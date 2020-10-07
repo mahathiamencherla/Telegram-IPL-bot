@@ -53,6 +53,7 @@ except Exception as e:
 
 def currUpdates():
 	global inn_final
+	global matches
 	while True:
 		ipl = refresh_match_details() 
 		
@@ -71,7 +72,8 @@ def currUpdates():
 		if ipl == None: #no match found in mom
 			print("currUpdates(): no match in mom")						
 		else:
-			break #found a match mom
+			break #found a match mom		
+		matches = c.matches()
 		time.sleep(60) #wait 60 seconds before searching again
 
 	scoreCard = c.scorecard(match_id)
@@ -149,11 +151,12 @@ def send_over_updates(msg):
 	return
 
 def match_day_details(replyBackToUser = False):
-	global start_time			
+	global start_time		
+	global matches	
 	ipl = refresh_match_details("preview") 		
 	if ipl == None: #no match found in progress
-		print("No match preview available")
-	else:
+		print("No match preview available\n refreshing matches")
+		matches = c.matches()	
 		if replyBackToUser:
 	 		return ("No match preview available")		
 		
@@ -170,6 +173,7 @@ def match_day_details(replyBackToUser = False):
 	return
 
 def toss_squad_details():
+	global matches
 	while True:
 		ipl = refresh_match_details("toss") 		
 		if ipl == None: #no match found in toss
@@ -179,9 +183,11 @@ def toss_squad_details():
 			break #found a match in toss
 		if ipl == None:
 			print("toss_squad_details(): no match in progress")	
+			print("refreshing matches")
+			matches = c.matches()
 		else:			
 			break #found a match in progress
-		time.sleep(60) #wait 60 seconds before checking again
+		time.sleep(30) #wait 30 seconds before checking again
 	
 	while True:	
 		print("Inside toss squad")
@@ -220,7 +226,9 @@ def get_match_details():
 				break #found a match compete
 			
 			if ipl == None: #no match found in mom
-				print("currUpdates(): no match in mom")						
+				print("currUpdates(): no match in mom")	
+				print("refreshing matches")
+				matches = c.matches()					
 			else:
 				break #found a match mom
 			time.sleep(60) #wait 60 seconds before searching again
@@ -295,12 +303,18 @@ def get_match_details():
 	return 	
 
 def innings_summary(scoreCard):  	
+	global matches 
 	global start_time
 	global inn_final
 	inn_final = int(scoreCard["scorecard"][0]["runs"]) + 1	
 	inn_sum = "Innings " + scoreCard["scorecard"][0]["inng_num"] + " summary:\n" + scoreCard["scorecard"][0]["runs"] + " - " + scoreCard["scorecard"][0]["wickets"] + "\n" + scoreCard["scorecard"][0]["overs"] + " overs"
 	send_to_all(inn_sum)
 	ipl = refresh_match_details("preview")
+	while ipl ==  None:
+		print("IN innings summary....couldnt find a match in preview")
+		print("refreshing matches")
+		matches = c.matches()
+		ipl = refresh_match_details("preview")
 	start_time = ipl["start_time"]
 	start_time = start_time[len(start_time)-8:len(start_time)-3]
 	set_toss_schedule()
