@@ -29,20 +29,25 @@ t = time.time()
 
 def refresh_match_details(state="inprogress"):
 	global match_id
-	ipl = None
-	for match in matches:
-		if(match["srs"] == "Indian Premier League 2020" and match["mchstate"]== state):
+	ipl = None	
+	print("Searching for state: ", state)
+	for match in matches:	
+		print(match["srs"]+"\t"+match["mchstate"])	
+		if(match["srs"] == "Indian Premier League 2020" and match["mchstate"]== state):			
 			match_id = match["id"]
-			ipl = match
-			break		
+			ipl = match	
+			print("braking", ipl)		
+			return ipl
+	print("outside", ipl)		
 	return ipl		
 
 try:
-	ipl = refresh_match_details("preview")
+	ipl = refresh_match_details("preview")	
 	start_time = ipl["start_time"]
 	start_time = start_time[len(start_time)-8:len(start_time)-3]
 	print("start time has been set to ", start_time)
-except:
+except Exception as e:
+	print(e)
 	print("did not set start_time")
 	pass
 
@@ -69,17 +74,6 @@ def currUpdates():
 			break #found a match mom
 		time.sleep(60) #wait 60 seconds before searching again
 
-	# try:
-	# 	ipl = refresh_match_details() 
-	# except UnboundLocalError:
-	# 	try:
-	# 		ipl = refresh_match_details("complete")
-	# 	except UnboundLocalError:
-	# 		try:
-	# 			ipl = refresh_match_details("mom")
-	# 		except:
-	# 			print("currUpdates didnt find any match inprogress/complete/mom")
-	# 			return currUpdates()
 	scoreCard = c.scorecard(match_id)
 	team1 = ipl["team1"]["name"]
 	team2 = ipl["team2"]["name"]
@@ -163,11 +157,6 @@ def match_day_details(replyBackToUser = False):
 		if replyBackToUser:
 	 		return ("No match preview available")		
 		
-	# try:
-	# 	ipl = refresh_match_details("preview")
-	# except:
-	# 	print("No match preview available")
-	# 	
 	if (ipl):
 		team1 = ipl["team1"]["name"]
 		team2 = ipl["team2"]["name"]
@@ -193,14 +182,7 @@ def toss_squad_details():
 		else:			
 			break #found a match in progress
 		time.sleep(60) #wait 60 seconds before checking again
-	# try:
-	# 	ipl = refresh_match_details("toss")
-	# 	print("getting toss details")
-	# except:
-	# 	try:
-	# 		ipl = refresh_match_details("inprogress")
-	# 	except:
-	# 		return toss_squad_details()
+	
 	while True:	
 		print("Inside toss squad")
 		if (ipl["team1"]["squad"] != []):
@@ -217,6 +199,7 @@ def toss_squad_details():
 	return
 
 def get_match_details():
+	global matches
 	try:
 		print(1)
 		global inn_final
@@ -242,22 +225,7 @@ def get_match_details():
 				break #found a match mom
 			time.sleep(60) #wait 60 seconds before searching again
 
-		# try:
-		# 	print(2)
-		# 	ipl = refresh_match_details() 
-		# except UnboundLocalError:
-		# 	print(3)
-		# 	try:
-		# 		ipl = refresh_match_details("complete")
-		# 	except UnboundLocalError:
-		# 		print(4)
-		# 		try:
-		# 			ipl = refresh_match_details("mom")		
-		# 		except UnboundLocalError:
-		# 			print(ipl)
-		# 			print("In get_match_details didnt find any match inprogress/complete/mom\tgonna sleep for 60")
-		# 			time.sleep(60)
-		# 			return get_match_details()
+		
 		scoreCard = c.scorecard(match_id)
 		prev_over = 0.0
 		wickets = 0
@@ -299,34 +267,28 @@ def get_match_details():
 			time.sleep(45)
 			scoreCard = c.scorecard(match_id)	
 		print("not")
+
+		# getting match summary
+		match_summary = ""
+		print("Gonna get match summary")
 		while True:
-			print(5)
-			match_summarry = get_match_summary(match_id)
-			scoreCard = c.scorecard(match_id)
-			end_of_match = "The match has ended\n"+scoreCard["scorecard"][0]["batteam"] + "'s final score: " + scoreCard["scorecard"][0]["runs"] + " - " + scoreCard["scorecard"][0]["wickets"] + "\n" + scoreCard["scorecard"][0]["overs"] + " overs\n"
-			ipl = refresh_match_details("preview")
-			start_time = ipl["start_time"]
-			start_time = start_time[len(start_time)-8:len(start_time)-3]
-			if match_summarry :
-				print(6)			
-				end_of_match += match_summarry
-				send_to_all(end_of_match)
-				match_day_details() #do you wann add this and
-				set_toss_schedule() #this above match_summarry = get_match_summary(match_id)
-									#so that it runs even if getting match summary is delayed
-				print(end_of_match)
-				break
-		#MOTM	
-		print(7)
-		while True:
-			print(8)
-			MOTM_name = get_MOTM(match_id)
-			if MOTM_name:
-				print(9)
-				MOTM = "The man of the match is " + MOTM_name
-				send_to_all(MOTM)
-				print(MOTM)
-				break
+			print("Current match summary is ", match_summary)						
+			match = c.matchinfo(match_id)
+			if match['mchstate'] in ["complete", "mom"]:
+				match_summary = match["status"] 
+				break		
+		scoreCard = c.scorecard(match_id)
+		end_of_match = "The match has ended\n"+scoreCard["scorecard"][0]["batteam"] + "'s final score: " + scoreCard["scorecard"][0]["runs"] + " - " + scoreCard["scorecard"][0]["wickets"] + "\n" + scoreCard["scorecard"][0]["overs"] + " overs\n"
+		end_of_match += match_summary
+		send_to_all(end_of_match)
+		print("Got match summary")
+
+		match_day_details()  #the rest is done in innings no? we could probably send upcoming match during innings break also
+		
+		print(end_of_match)
+
+		matches = c.matches()
+		
 
 	except Exception as e:
 		print("Error caugh by try block in get_match_details():\n ",e)
@@ -383,7 +345,7 @@ def set_toss_schedule():
 set_toss_schedule()
 #no change to thread except- starting it at start_time
 schedule.every().day.at(start_time).do(beginThread)
-beginThread()
+# beginThread()
 
 print("server.py   7")
 

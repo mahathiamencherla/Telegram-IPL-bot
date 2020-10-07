@@ -7,47 +7,47 @@ print("Cricbuzz.py start")
 proxy = {"http": 'http://'+get_working_proxy()}
 print("firstCricbuzz ",proxy)
 
-def get_MOTM(match_id):
-	print("in MOTM")
-	url = "https://mapps.cricbuzz.com/cbzios/match/{}/".format(match_id)		
-	while True:		
-		print("in MOTM IP: ",proxy)
-		try:
-			r = requests.get(url, proxies=proxy).json()
-			break
-		except Exception as e:
-			print(e)
-			print("In MOTM gonna sleep for 60s")
-			time.sleep(60)
-			print("In MOTM woke")
-			proxy["http"] = get_working_proxy()
-	try :
-		manOfTheMatch = r["header"]["momNames"].pop()
-	except:
-		time.sleep(120)
-		return None
-	return manOfTheMatch
+# def get_MOTM(match_id):
+# 	print("in MOTM")
+# 	url = "https://mapps.cricbuzz.com/cbzios/match/{}/".format(match_id)		
+# 	while True:		
+# 		print("in MOTM IP: ",proxy)
+# 		try:
+# 			r = requests.get(url, proxies=proxy).json()
+# 			break
+# 		except Exception as e:
+# 			print(e)
+# 			print("In MOTM gonna sleep for 60s")
+# 			time.sleep(60)
+# 			print("In MOTM woke")
+# 			proxy["http"] = get_working_proxy()
+# 	try :
+# 		manOfTheMatch = r["header"]["momNames"].pop()
+# 	except:
+# 		time.sleep(120)
+# 		return None
+# 	return manOfTheMatch
 
-def get_match_summary(match_id):
-	print("in matchSUM")	
-	url = "https://mapps.cricbuzz.com/cbzios/match/{}/".format(match_id)
-	state = None
-	while not(state == "complete" or state == "mom"):		
-		print("in matchSUM whileloop; state is ", state)
-		print("In match summary gonna sleep for 60s")
-		time.sleep(60)
-		print("In match summary woke")		
-		while True:
-			print("inCricbuzz ",proxy)
-			try:
-				r = requests.get(url, proxies=proxy).json()
-				break
-			except Exception as e:
-				print(e)				
-				proxy["http"] = get_working_proxy()
-		state = r["header"]["state"]	
-	status = r["header"]["status"]
-	return status
+# def get_match_summary(match_id):
+# 	print("in matchSUM")	
+# 	url = "https://mapps.cricbuzz.com/cbzios/match/{}/".format(match_id)
+# 	state = None
+# 	while not(state == "complete" or state == "mom"):		
+# 		print("in matchSUM whileloop; state is ", state)
+# 		print("In match summary gonna sleep for 60s")
+# 		time.sleep(60)
+# 		print("In match summary woke")		
+# 		while True:
+# 			print("inCricbuzz ",proxy)
+# 			try:
+# 				r = requests.get(url, proxies=proxy).json()
+# 				break
+# 			except Exception as e:
+# 				print(e)				
+# 				proxy["http"] = get_working_proxy()
+# 		state = r["header"]["state"]	
+# 	status = r["header"]["status"]
+# 	return status
 
 class Cricbuzz():
 	def __init__(self):
