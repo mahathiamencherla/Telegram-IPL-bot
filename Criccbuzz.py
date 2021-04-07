@@ -4,7 +4,7 @@ from proxy import *
 from bs4 import BeautifulSoup
 
 print("Cricbuzz.py start")
-proxy = {"http": 'http://'+get_working_proxy()}
+# proxy = {"http": 'http://'+get_working_proxy()}
 print("firstCricbuzz ",proxy)
 
 def get_MOTM(match_id):
@@ -13,11 +13,11 @@ def get_MOTM(match_id):
 	while True:		
 		print("in MOTM IP: ",proxy)
 		try:
-			r = requests.get(url, proxies=proxy).json()
+			r = requests.get(url).json()
 			break
 		except Exception as e:
 			print(e)
-			proxy["http"] = get_working_proxy()
+			# proxy["http"] = get_working_proxy()
 	try :
 		manOfTheMatch = r["header"]["momNames"].pop()
 	except:
@@ -34,11 +34,11 @@ def get_match_summary(match_id):
 		while True:
 			print("inCricbuzz ",proxy)
 			try:
-				r = requests.get(url, proxies=proxy).json()
+				r = requests.get(url).json()
 				break
 			except Exception as e:
 				print(e)
-				proxy["http"] = get_working_proxy()
+				# proxy["http"] = get_working_proxy()
 		state = r["header"]["state"]	
 	status = r["header"]["status"]
 	return status
@@ -52,11 +52,11 @@ class Cricbuzz():
 		while True:
 			print("inCricbuzz ",proxy)
 			try:
-				r = requests.get(url, proxies=proxy).json()
+				r = requests.get(url).json()
 				return r
 			except Exception as e:
 				print(e)
-				proxy["http"] = get_working_proxy()
+				# proxy["http"] = get_working_proxy()
 			
 	def players_mapping(self,mid):
 		url = "http://mapps.cricbuzz.com/cbzios/match/" + mid
