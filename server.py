@@ -1,5 +1,5 @@
 from bot import telegram_chatbot
-#from pycricbuzz import Cricbuzz
+# from pycricbuzz import Cricbuzz
 from Criccbuzz import *
 import json
 import threading
@@ -15,8 +15,8 @@ tg_bot = telegram_chatbot("config.cfg")
 
 update_id = None
 match_id = None
-inn_final = 0
-start_time = '15:30'
+inn_final = -1
+start_time = '19:30'
 
 print("server.py   4")
 matches = c.matches()
@@ -29,34 +29,57 @@ t = time.time()
 
 def refresh_match_details(state="inprogress"):
 	global match_id
+	ipl = None
 	for match in matches:
 		if(match["srs"] == "Indian Premier League 2020" and match["mchstate"]== state):
 			match_id = match["id"]
 			ipl = match
-			break
+			break		
 	return ipl		
 
 try:
 	ipl = refresh_match_details("preview")
 	start_time = ipl["start_time"]
 	start_time = start_time[len(start_time)-8:len(start_time)-3]
-	print("try for start", start_time)
+	print("start time has been set to ", start_time)
 except:
 	print("did not set start_time")
 	pass
 
 def currUpdates():
 	global inn_final
-	try:
+	while True:
 		ipl = refresh_match_details() 
-	except UnboundLocalError:
-		try:
-			ipl = refresh_match_details("complete")
-		except UnboundLocalError:
-			try:
-				ipl = refresh_match_details("mom")
-			except:
-				return currUpdates()
+		
+		if ipl == None: #no match found in progress
+			print("currUpdates(): no match inprogress")
+			ipl = refresh_match_details("complete") 
+		else:
+			break #found a match in progress
+		
+		if ipl == None: #no match found in complete
+			print("currUpdates(): no match complete")
+			ipl = refresh_match_details("mom") 
+		else:
+			break #found a match compete
+		
+		if ipl == None: #no match found in mom
+			print("currUpdates(): no match in mom")						
+		else:
+			break #found a match mom
+		time.sleep(60) #wait 60 seconds before searching again
+
+	# try:
+	# 	ipl = refresh_match_details() 
+	# except UnboundLocalError:
+	# 	try:
+	# 		ipl = refresh_match_details("complete")
+	# 	except UnboundLocalError:
+	# 		try:
+	# 			ipl = refresh_match_details("mom")
+	# 		except:
+	# 			print("currUpdates didnt find any match inprogress/complete/mom")
+	# 			return currUpdates()
 	scoreCard = c.scorecard(match_id)
 	team1 = ipl["team1"]["name"]
 	team2 = ipl["team2"]["name"]
@@ -72,9 +95,6 @@ def currUpdates():
 		over_update += str((inn_final - int(scoreCard["scorecard"][0]["runs"]))) + " runs required from "	+ str(int(120-((math.floor(curr_balls)*6)+(curr_balls*10)%10))) +" balls."	
 
 	return over_update
-
-
-# scoreCard = c.scorecard(match_id)
 
 def addUserId(userList, id):
 	if id not in userList:
@@ -113,10 +133,10 @@ def make_reply(msg, id):
 		start_time_num = start_time.replace(":",'')
 		start_time_num = int(start_time_num)
 		if curr_time > start_time_num and curr_time <= 2359:
-			print(curr_time, start_time_num)
+			print("going to currUpdates() ", curr_time, start_time_num)
 			reply = currUpdates()
 		else:
-			print(curr_time, start_time_num)
+			print("going to match_day_details() ", curr_time, start_time_num)
 			reply = match_day_details(True)
 	else:
 		reply = "Welcome to the IPL Updates bot!\n\nUse this as a user guide:\n1. /next_match to get upcoming match details.\n2. /points_table to get updates points table.\n3. The bot is going to send you summary updates of every match. If you are prompted with a \"Do you want more match details?\" question, you can answer yes to receive over by over and wicket updates.\n4. Type \"Give me updates\" to get the current livescore. \n5. /get_updates to get over by over updates.  \n6. /stop_match_details to stop getting over by over and wicket details.\nYou can always use /stop to stop the bot.\n\nThank you!\n\n\nFind the source code on: https://github.com/mahathiamencherla15/Telegram-IPL-bot/ "	
@@ -135,8 +155,19 @@ def send_over_updates(msg):
 	return
 
 def match_day_details(replyBackToUser = False):
-	global start_time
-	ipl = refresh_match_details("preview")
+	global start_time			
+	ipl = refresh_match_details("preview") 		
+	if ipl == None: #no match found in progress
+		print("No match preview available")
+	else:
+		if replyBackToUser:
+	 		return ("No match preview available")		
+		
+	# try:
+	# 	ipl = refresh_match_details("preview")
+	# except:
+	# 	print("No match preview available")
+	# 	
 	if (ipl):
 		team1 = ipl["team1"]["name"]
 		team2 = ipl["team2"]["name"]
@@ -150,14 +181,26 @@ def match_day_details(replyBackToUser = False):
 	return
 
 def toss_squad_details():
-	try:
-		ipl = refresh_match_details("toss")
-		print("getting toss details")
-	except:
-		try:
+	while True:
+		ipl = refresh_match_details("toss") 		
+		if ipl == None: #no match found in toss
+			print("toss_squad_details(): no match in toss")			
 			ipl = refresh_match_details("inprogress")
-		except:
-			return toss_squad_details()
+		else:
+			break #found a match in toss
+		if ipl == None:
+			print("toss_squad_details(): no match in progress")	
+		else:			
+			break #found a match in progress
+		time.sleep(60) #wait 60 seconds before checking again
+	# try:
+	# 	ipl = refresh_match_details("toss")
+	# 	print("getting toss details")
+	# except:
+	# 	try:
+	# 		ipl = refresh_match_details("inprogress")
+	# 	except:
+	# 		return toss_squad_details()
 	while True:	
 		print("Inside toss squad")
 		if (ipl["team1"]["squad"] != []):
@@ -174,88 +217,119 @@ def toss_squad_details():
 	return
 
 def get_match_details():
-	print(1)
-	global inn_final
-	global start_time
 	try:
-		print(2)
-		ipl = refresh_match_details() 
-	except UnboundLocalError:
-		print(3)
-		try:
-			ipl = refresh_match_details("complete")
-		except UnboundLocalError:
-			print(4)
-			try:
-				ipl = refresh_match_details("mom")		
-			except UnboundLocalError:
-				time.sleep(60)
-				return get_match_details()
-	scoreCard = c.scorecard(match_id)
-	prev_over = 0.0
-	wickets = 0
-	if(inn_final == 0 and int(scoreCard["scorecard"][0]["inng_num"]) == 2):
-		 	inn_final = int(scoreCard["scorecard"][1]["runs"]) + 1
-	while not(float(scoreCard["scorecard"][0]["overs"]) == 20.0 and int(scoreCard["scorecard"][0]["inng_num"]) == 2):
-		if (int(scoreCard["scorecard"][0]["runs"]) >= inn_final):
-			break
-		if (scoreCard["scorecard"][0]["wickets"] == 10 and int(scoreCard["scorecard"][0]["inng_num"]) == 2):
-			break
-		if (scoreCard["scorecard"][0]["wickets"] == 10 and int(scoreCard["scorecard"][0]["inng_num"]) == 1):
-			wickets = 0
-			innings_summary(scoreCard)
-			continue
+		print(1)
+		global inn_final
+		global start_time
+		while True:
+			ipl = refresh_match_details() 
 			
-		if wickets != int(scoreCard["scorecard"][0]["wickets"]):
-			fall_of_wickets(scoreCard)
-			wickets = int(scoreCard["scorecard"][0]["wickets"])		
-		# if(float(scoreCard["scorecard"][0]["overs"]) == 20.0 and int(scoreCard["scorecard"][0]["inng_num"]) == 1):
-		# 	inn_final = int(scoreCard["scorecard"][0]["runs"]) + 1		
-		print("Check is at", float(scoreCard["scorecard"][0]["overs"]))
-		if float(scoreCard["scorecard"][0]["overs"]).is_integer() and prev_over != float(scoreCard["scorecard"][0]["overs"]):			
-			prev_over = float(scoreCard["scorecard"][0]["overs"])			
-			over_update = scoreCard["scorecard"][0]["batteam"] + " are batting!\n" + scoreCard["scorecard"][0]["runs"] + " - " + scoreCard["scorecard"][0]["wickets"] + "\n" + scoreCard["scorecard"][0]["overs"] + " overs\n"
-			batcard = scoreCard["scorecard"][0]["batcard"]
-			for batsman in batcard:
-				if(batsman["dismissal"] == "batting"):
-					over_update += 	batsman["name"] + " - " + batsman["runs"] + "(" + batsman["balls"] + ")\n"
-			if(int(scoreCard["scorecard"][0]["inng_num"]) == 2):
-				curr_balls = float(scoreCard["scorecard"][0]["overs"])
-				over_update += str((inn_final - int(scoreCard["scorecard"][0]["runs"]))) + " runs required from "	+ str(int(120-((math.floor(curr_balls)*6)+(curr_balls*10)%10))) +" balls."	
-			send_over_updates(over_update)			
-			if(float(scoreCard["scorecard"][0]["overs"]) == 20.0):
+			if ipl == None: #no match found in progress
+				print("currUpdates(): no match inprogress")
+				ipl = refresh_match_details("complete") 
+			else:
+				break #found a match in progress
+			
+			if ipl == None: #no match found in complete
+				print("currUpdates(): no match complete")
+				ipl = refresh_match_details("mom") 
+			else:
+				break #found a match compete
+			
+			if ipl == None: #no match found in mom
+				print("currUpdates(): no match in mom")						
+			else:
+				break #found a match mom
+			time.sleep(60) #wait 60 seconds before searching again
+
+		# try:
+		# 	print(2)
+		# 	ipl = refresh_match_details() 
+		# except UnboundLocalError:
+		# 	print(3)
+		# 	try:
+		# 		ipl = refresh_match_details("complete")
+		# 	except UnboundLocalError:
+		# 		print(4)
+		# 		try:
+		# 			ipl = refresh_match_details("mom")		
+		# 		except UnboundLocalError:
+		# 			print(ipl)
+		# 			print("In get_match_details didnt find any match inprogress/complete/mom\tgonna sleep for 60")
+		# 			time.sleep(60)
+		# 			return get_match_details()
+		scoreCard = c.scorecard(match_id)
+		prev_over = 0.0
+		wickets = 0
+		if(inn_final == -1 and int(scoreCard["scorecard"][0]["inng_num"]) == 2):
+				inn_final = int(scoreCard["scorecard"][1]["runs"]) + 1
+		print("out")
+		while not(float(scoreCard["scorecard"][0]["overs"]) == 20.0 and int(scoreCard["scorecard"][0]["inng_num"]) == 2):
+			print("in")
+			if (int(scoreCard["scorecard"][0]["runs"]) >= inn_final and int(scoreCard["scorecard"][0]["inng_num"]) == 2):
+				print("exceeded target")
+				break
+			if (int(scoreCard["scorecard"][0]["wickets"]) == 10 and int(scoreCard["scorecard"][0]["inng_num"]) == 2):
+				print("all out inn:2")
+				break
+			if (int(scoreCard["scorecard"][0]["wickets"]) == 10 and int(scoreCard["scorecard"][0]["inng_num"]) == 1):
+				print("all out inn:1")
 				wickets = 0
 				innings_summary(scoreCard)
-		time.sleep(45)
-		scoreCard = c.scorecard(match_id)	
-	print("not")
-	while True:
-		print(5)
-		match_summarry = get_match_summary(match_id)
-		scoreCard = c.scorecard(match_id)
-		end_of_match = "The match has ended\n"+scoreCard["scorecard"][0]["batteam"] + "'s final score: " + scoreCard["scorecard"][0]["runs"] + " - " + scoreCard["scorecard"][0]["wickets"] + "\n" + scoreCard["scorecard"][0]["overs"] + " overs\n"
-		ipl = refresh_match_details("preview")
-		start_time = ipl["start_time"]
-		start_time = start_time[len(start_time)-8:len(start_time)-3]
-		if match_summarry :
-			print(6)			
-			end_of_match += match_summarry
-			send_to_all(end_of_match)
-			match_day_details()
-			set_toss_schedule()
-			print(end_of_match)
-			break
-	#MOTM	
-	print(7)
-	while True:
-		print(8)
-		MOTM_name = get_MOTM(match_id)
-		if MOTM_name:
-			print(9)
-			MOTM = "The man of the match is " + MOTM_name
-			send_to_all(MOTM)
-			print(MOTM)
-			break
+				continue
+				
+			if wickets != int(scoreCard["scorecard"][0]["wickets"]):
+				fall_of_wickets(scoreCard)
+				wickets = int(scoreCard["scorecard"][0]["wickets"])				
+			print("Check is at", float(scoreCard["scorecard"][0]["overs"]))
+			if float(scoreCard["scorecard"][0]["overs"]).is_integer() and prev_over != float(scoreCard["scorecard"][0]["overs"]):			
+				prev_over = float(scoreCard["scorecard"][0]["overs"])			
+				over_update = scoreCard["scorecard"][0]["batteam"] + " are batting!\n" + scoreCard["scorecard"][0]["runs"] + " - " + scoreCard["scorecard"][0]["wickets"] + "\n" + scoreCard["scorecard"][0]["overs"] + " overs\n"
+				batcard = scoreCard["scorecard"][0]["batcard"]
+				for batsman in batcard:
+					if(batsman["dismissal"] == "batting"):
+						over_update += 	batsman["name"] + " - " + batsman["runs"] + "(" + batsman["balls"] + ")\n"
+				if(int(scoreCard["scorecard"][0]["inng_num"]) == 2):
+					curr_balls = float(scoreCard["scorecard"][0]["overs"])
+					over_update += str((inn_final - int(scoreCard["scorecard"][0]["runs"]))) + " runs required from "	+ str(int(120-((math.floor(curr_balls)*6)+(curr_balls*10)%10))) +" balls."	
+				send_over_updates(over_update)			
+				if(float(scoreCard["scorecard"][0]["overs"]) == 20.0):
+					wickets = 0
+					innings_summary(scoreCard)
+			time.sleep(45)
+			scoreCard = c.scorecard(match_id)	
+		print("not")
+		while True:
+			print(5)
+			match_summarry = get_match_summary(match_id)
+			scoreCard = c.scorecard(match_id)
+			end_of_match = "The match has ended\n"+scoreCard["scorecard"][0]["batteam"] + "'s final score: " + scoreCard["scorecard"][0]["runs"] + " - " + scoreCard["scorecard"][0]["wickets"] + "\n" + scoreCard["scorecard"][0]["overs"] + " overs\n"
+			ipl = refresh_match_details("preview")
+			start_time = ipl["start_time"]
+			start_time = start_time[len(start_time)-8:len(start_time)-3]
+			if match_summarry :
+				print(6)			
+				end_of_match += match_summarry
+				send_to_all(end_of_match)
+				match_day_details() #do you wann add this and
+				set_toss_schedule() #this above match_summarry = get_match_summary(match_id)
+									#so that it runs even if getting match summary is delayed
+				print(end_of_match)
+				break
+		#MOTM	
+		print(7)
+		while True:
+			print(8)
+			MOTM_name = get_MOTM(match_id)
+			if MOTM_name:
+				print(9)
+				MOTM = "The man of the match is " + MOTM_name
+				send_to_all(MOTM)
+				print(MOTM)
+				break
+
+	except Exception as e:
+		print("Error caugh by try block in get_match_details():\n ",e)
 	return 	
 
 def innings_summary(scoreCard):  	
@@ -322,7 +396,7 @@ while True:
 		updates = updates["result"]
 	except KeyError:
 		print("No messages")
-		pass	
+		continue #TypeError: string indices must be integers  ; replaced the pass in this line with continue
 	if updates:
 		for item in updates:
 			update_id = item["update_id"]

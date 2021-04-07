@@ -12,7 +12,7 @@ def get_proxies():
     rows = my_table.findChildren(['tr'])    
     for row in rows:
         count += 1
-        if count == 12:
+        if count == 22:
             break
         cell = row.findChildren('td')
         if len(cell) > 0:          
@@ -23,8 +23,7 @@ print("proxy.py")
 proxies = get_proxies()
 print("got proxy")
 
-def get_working_proxy():    
-    url = "https://mapps.cricbuzz.com/cbzios/match/livematches"
+def get_working_proxy():        
     global proxies
     while (True):
         if proxies == []:
@@ -32,16 +31,6 @@ def get_working_proxy():
             proxies = get_proxies()
         count = 1
         while proxies != []:
-            print(count,len(proxies)," proxies in list",end="\n")            
-            # try:
-            #     response = requests.get(url,proxies={"https": 'http://'+proxies[0]})
-            #     r=response.json()
-            #     # print(count,"Working proxy: ",proxy)                
-            #     return(proxies[0])
-            # except:      
-            #     print(count,"Skipping! Connnection error",proxies[0])
-            #     proxies.remove(proxies[0])                
+            print(count,len(proxies)," proxies in list",end="\n")          
             count += 1
             return proxies.pop()
-
-# print("Output:",get_working_proxy())
